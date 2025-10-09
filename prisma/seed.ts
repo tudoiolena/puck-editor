@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const defaultDashboardData = {
+const defaultFormContent = {
   content: [
     {
       type: "Hero",
@@ -120,26 +120,34 @@ async function main() {
     return;
   }
 
-  // Create default dashboard page for each user who doesn't have one
+  // Create default welcome form for each user who doesn't have one
   for (const user of users) {
-    const existingPage = await prisma.page.findFirst({
+    const existingForm = await prisma.form.findFirst({
       where: {
-        path: '/dashboard',
+        slug: 'welcome',
         user_id: user.id,
       },
     });
 
-    if (!existingPage) {
-      await prisma.page.create({
+    if (!existingForm) {
+      await prisma.form.create({
         data: {
-          path: '/dashboard',
-          data: defaultDashboardData as any,
+          title: 'Welcome Form',
+          description: 'A sample form to get you started',
+          slug: 'welcome',
+          puck_content: defaultFormContent as any,
+          is_published: true,
           user_id: user.id,
+          settings: {
+            emailNotifications: true,
+            requireEmail: true,
+            thankYouMessage: 'Thank you for your submission!',
+          } as any,
         },
       });
-      console.log(`✓ Created default dashboard page for user: ${user.email}`);
+      console.log(`✓ Created default welcome form for user: ${user.email}`);
     } else {
-      console.log(`- Dashboard page already exists for user: ${user.email}`);
+      console.log(`- Welcome form already exists for user: ${user.email}`);
     }
   }
 

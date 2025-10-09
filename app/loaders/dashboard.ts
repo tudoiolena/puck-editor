@@ -1,6 +1,6 @@
 import { verifyAuthToken } from '../lib/auth';
 import { prisma } from '../lib/db';
-import { resolvePage } from '../lib/pages.server';
+import { getUserForms } from '../lib/forms.server';
 import { redirect } from 'react-router';
 
 export async function loader({ request }: { request: Request }) {
@@ -38,10 +38,10 @@ export async function loader({ request }: { request: Request }) {
       return redirect('/login');
     }
 
-    // Get page data for Puck
-    const pageData = await resolvePage('/dashboard', user.id);
+    // Get user's forms
+    const forms = await getUserForms(user.id);
 
-    return { user, pageData };
+    return { user, forms };
   } catch (error) {
     console.error('Dashboard loader error:', error);
     return redirect('/login');

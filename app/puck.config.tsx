@@ -48,6 +48,61 @@ export type UserConfig = {
     }>;
     minItemWidth: number;
   };
+  // Form Components
+  TextInput: {
+    name: string;
+    label: string;
+    placeholder?: string;
+    required: boolean;
+    helperText?: string;
+  };
+  TextArea: {
+    name: string;
+    label: string;
+    placeholder?: string;
+    required: boolean;
+    rows: number;
+    helperText?: string;
+  };
+  EmailInput: {
+    name: string;
+    label: string;
+    placeholder?: string;
+    required: boolean;
+    helperText?: string;
+  };
+  Select: {
+    name: string;
+    label: string;
+    required: boolean;
+    options: Array<{
+      label: string;
+      value: string;
+    }>;
+    helperText?: string;
+  };
+  RadioGroup: {
+    name: string;
+    label: string;
+    required: boolean;
+    options: Array<{
+      label: string;
+      value: string;
+    }>;
+  };
+  CheckboxGroup: {
+    name: string;
+    label: string;
+    required: boolean;
+    options: Array<{
+      label: string;
+      value: string;
+    }>;
+  };
+  SubmitButton: {
+    label: string;
+    align: "left" | "center" | "right";
+  };
 };
 
 export const config: Config<UserConfig> = {
@@ -389,6 +444,306 @@ export const config: Config<UserConfig> = {
                 <p className="text-sm text-gray-600">{item.description}</p>
               </div>
             ))}
+          </div>
+        );
+      },
+    },
+    // Form Components
+    TextInput: {
+      fields: {
+        name: { type: "text", label: "Field Name" },
+        label: { type: "text", label: "Label" },
+        placeholder: { type: "text", label: "Placeholder" },
+        required: { type: "radio", options: [{ label: "Required", value: true }, { label: "Optional", value: false }] },
+        helperText: { type: "text", label: "Helper Text" },
+      },
+      defaultProps: {
+        name: "field",
+        label: "Text Field",
+        placeholder: "",
+        required: false,
+        helperText: "",
+      },
+      render: ({ name, label, placeholder, required, helperText }) => {
+        return (
+          <div className="mb-4">
+            <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
+              {label} {required && <span className="text-red-600">*</span>}
+            </label>
+            <input
+              type="text"
+              id={name}
+              name={name}
+              placeholder={placeholder}
+              required={required}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            {helperText && <p className="mt-1 text-sm text-gray-500">{helperText}</p>}
+          </div>
+        );
+      },
+    },
+    TextArea: {
+      fields: {
+        name: { type: "text", label: "Field Name" },
+        label: { type: "text", label: "Label" },
+        placeholder: { type: "text", label: "Placeholder" },
+        required: { type: "radio", options: [{ label: "Required", value: true }, { label: "Optional", value: false }] },
+        rows: { type: "number", label: "Rows" },
+        helperText: { type: "text", label: "Helper Text" },
+      },
+      defaultProps: {
+        name: "message",
+        label: "Message",
+        placeholder: "",
+        required: false,
+        rows: 4,
+        helperText: "",
+      },
+      render: ({ name, label, placeholder, required, rows, helperText }) => {
+        return (
+          <div className="mb-4">
+            <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
+              {label} {required && <span className="text-red-600">*</span>}
+            </label>
+            <textarea
+              id={name}
+              name={name}
+              placeholder={placeholder}
+              required={required}
+              rows={rows}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            {helperText && <p className="mt-1 text-sm text-gray-500">{helperText}</p>}
+          </div>
+        );
+      },
+    },
+    EmailInput: {
+      fields: {
+        name: { type: "text", label: "Field Name" },
+        label: { type: "text", label: "Label" },
+        placeholder: { type: "text", label: "Placeholder" },
+        required: { type: "radio", options: [{ label: "Required", value: true }, { label: "Optional", value: false }] },
+        helperText: { type: "text", label: "Helper Text" },
+      },
+      defaultProps: {
+        name: "email",
+        label: "Email Address",
+        placeholder: "your@email.com",
+        required: true,
+        helperText: "",
+      },
+      render: ({ name, label, placeholder, required, helperText }) => {
+        return (
+          <div className="mb-4">
+            <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
+              {label} {required && <span className="text-red-600">*</span>}
+            </label>
+            <input
+              type="email"
+              id={name}
+              name={name}
+              placeholder={placeholder}
+              required={required}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            {helperText && <p className="mt-1 text-sm text-gray-500">{helperText}</p>}
+          </div>
+        );
+      },
+    },
+    Select: {
+      fields: {
+        name: { type: "text", label: "Field Name" },
+        label: { type: "text", label: "Label" },
+        required: { type: "radio", options: [{ label: "Required", value: true }, { label: "Optional", value: false }] },
+        options: {
+          type: "array",
+          arrayFields: {
+            label: { type: "text" },
+            value: { type: "text" },
+          },
+          defaultItemProps: {
+            label: "Option",
+            value: "option",
+          },
+        },
+        helperText: { type: "text", label: "Helper Text" },
+      },
+      defaultProps: {
+        name: "select",
+        label: "Select Option",
+        required: false,
+        options: [
+          { label: "Option 1", value: "option1" },
+          { label: "Option 2", value: "option2" },
+        ],
+        helperText: "",
+      },
+      render: ({ name, label, required, options, helperText }) => {
+        return (
+          <div className="mb-4">
+            <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
+              {label} {required && <span className="text-red-600">*</span>}
+            </label>
+            <select
+              id={name}
+              name={name}
+              required={required}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Select an option...</option>
+              {options.map((option, idx) => (
+                <option key={idx} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {helperText && <p className="mt-1 text-sm text-gray-500">{helperText}</p>}
+          </div>
+        );
+      },
+    },
+    RadioGroup: {
+      fields: {
+        name: { type: "text", label: "Field Name" },
+        label: { type: "text", label: "Label" },
+        required: { type: "radio", options: [{ label: "Required", value: true }, { label: "Optional", value: false }] },
+        options: {
+          type: "array",
+          arrayFields: {
+            label: { type: "text" },
+            value: { type: "text" },
+          },
+          defaultItemProps: {
+            label: "Option",
+            value: "option",
+          },
+        },
+      },
+      defaultProps: {
+        name: "radio",
+        label: "Choose One",
+        required: false,
+        options: [
+          { label: "Option 1", value: "option1" },
+          { label: "Option 2", value: "option2" },
+        ],
+      },
+      render: ({ name, label, required, options }) => {
+        return (
+          <div className="mb-4">
+            <fieldset>
+              <legend className="block text-sm font-medium text-gray-700 mb-2">
+                {label} {required && <span className="text-red-600">*</span>}
+              </legend>
+              <div className="space-y-2">
+                {options.map((option, idx) => (
+                  <div key={idx} className="flex items-center">
+                    <input
+                      type="radio"
+                      id={`${name}-${idx}`}
+                      name={name}
+                      value={option.value}
+                      required={required && idx === 0}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    />
+                    <label htmlFor={`${name}-${idx}`} className="ml-2 text-sm text-gray-700">
+                      {option.label}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </fieldset>
+          </div>
+        );
+      },
+    },
+    CheckboxGroup: {
+      fields: {
+        name: { type: "text", label: "Field Name" },
+        label: { type: "text", label: "Label" },
+        required: { type: "radio", options: [{ label: "Required", value: true }, { label: "Optional", value: false }] },
+        options: {
+          type: "array",
+          arrayFields: {
+            label: { type: "text" },
+            value: { type: "text" },
+          },
+          defaultItemProps: {
+            label: "Option",
+            value: "option",
+          },
+        },
+      },
+      defaultProps: {
+        name: "checkbox",
+        label: "Choose Options",
+        required: false,
+        options: [
+          { label: "Option 1", value: "option1" },
+          { label: "Option 2", value: "option2" },
+        ],
+      },
+      render: ({ name, label, required, options }) => {
+        return (
+          <div className="mb-4">
+            <fieldset>
+              <legend className="block text-sm font-medium text-gray-700 mb-2">
+                {label} {required && <span className="text-red-600">*</span>}
+              </legend>
+              <div className="space-y-2">
+                {options.map((option, idx) => (
+                  <div key={idx} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`${name}-${idx}`}
+                      name={name}
+                      value={option.value}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor={`${name}-${idx}`} className="ml-2 text-sm text-gray-700">
+                      {option.label}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </fieldset>
+          </div>
+        );
+      },
+    },
+    SubmitButton: {
+      fields: {
+        label: { type: "text", label: "Button Label" },
+        align: {
+          type: "radio",
+          options: [
+            { label: "Left", value: "left" },
+            { label: "Center", value: "center" },
+            { label: "Right", value: "right" },
+          ],
+        },
+      },
+      defaultProps: {
+        label: "Submit",
+        align: "left",
+      },
+      render: ({ label, align }) => {
+        const alignClasses = {
+          left: "justify-start",
+          center: "justify-center",
+          right: "justify-end",
+        };
+        return (
+          <div className={`flex ${alignClasses[align]} mb-4`}>
+            <button
+              type="submit"
+              className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-colors"
+            >
+              {label}
+            </button>
           </div>
         );
       },

@@ -21,22 +21,43 @@ model User {
   verification_expires_at DateTime?
   created_at              DateTime @default(now())
   updated_at              DateTime @updatedAt
-  pages                   Page[]
+  forms                   Form[]
 
   @@map("users")
 }
 
-model Page {
-  id         Int      @id @default(autoincrement())
-  path       String   @unique
-  data       Json
-  user_id    Int
-  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  deleted_at DateTime?
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+model Form {
+  id               Int              @id @default(autoincrement())
+  user_id          Int
+  title            String
+  description      String?
+  slug             String           @unique
+  puck_content     Json
+  is_published     Boolean          @default(false)
+  settings         Json?            @default("{}")
+  deleted_at       DateTime?
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  user             User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  submissions      FormSubmission[]
 
   @@index([user_id])
-  @@index([path, deleted_at])
-  @@map("pages")
+  @@index([slug])
+  @@index([is_published])
+  @@map("forms")
+}
+
+model FormSubmission {
+  id              Int      @id @default(autoincrement())
+  form_id         Int
+  email           String
+  submission_data Json
+  ip_address      String?
+  submitted_at    DateTime @default(now())
+  form            Form     @relation(fields: [form_id], references: [id], onDelete: Cascade)
+
+  @@index([form_id])
+  @@index([email])
+  @@index([submitted_at])
+  @@map("form_submissions")
 }
