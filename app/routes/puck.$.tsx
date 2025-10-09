@@ -1,5 +1,6 @@
 import { Puck } from "@measured/puck";
 import "@measured/puck/puck.css";
+import { useSubmit } from "react-router";
 
 import { config } from "../puck.config";
 import type { Route } from "./+types/puck.$";
@@ -15,6 +16,8 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function PuckEditor({ loaderData }: Route.ComponentProps) {
+  const submit = useSubmit();
+  
   return (
     <Puck
       config={config}
@@ -23,13 +26,9 @@ export default function PuckEditor({ loaderData }: Route.ComponentProps) {
         const formData = new FormData();
         formData.append("data", JSON.stringify(data));
         
-        await fetch(`/puck${loaderData.path}`, {
+        submit(formData, {
           method: "POST",
-          body: formData,
         });
-        
-        // Redirect to the published page
-        window.location.href = loaderData.path;
       }}
     />
   );

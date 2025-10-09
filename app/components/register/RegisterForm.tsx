@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate, Form, useActionData, useSearchParams } from 'react-router';
-import { Box, Button, Paper, Alert, CircularProgress, Typography } from '@mui/material';
+import { Link, Form, useActionData, useSearchParams } from 'react-router';
+import { Box, Button, Paper, Alert, Typography } from '@mui/material';
 import { RegisterHeader } from './RegisterHeader';
 import { NameFields } from './NameFields';
 import { EmailField } from './EmailField';
@@ -11,7 +11,6 @@ import { RegistrationSuccess } from './RegistrationSuccess';
 import { validateRegisterForm, hasErrors, type RegisterFormData, type RegisterFormErrors } from './registerValidation';
 
 export function RegisterForm() {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const actionData = useActionData() as { error?: string } | undefined;
   

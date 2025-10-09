@@ -38,3 +38,18 @@ export function verifyAuthToken(token: string): { userId: number } | null {
     return null;
   }
 }
+
+export function getUserIdFromRequest(request: Request): number | null {
+  const cookieHeader = request.headers.get('Cookie');
+  const authToken = cookieHeader
+    ?.split(';')
+    .find(cookie => cookie.trim().startsWith('auth-token='))
+    ?.split('=')[1];
+
+  if (!authToken) {
+    return null;
+  }
+
+  const decoded = verifyAuthToken(authToken);
+  return decoded?.userId ?? null;
+}

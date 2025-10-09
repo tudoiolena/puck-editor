@@ -21,6 +21,22 @@ model User {
   verification_expires_at DateTime?
   created_at              DateTime @default(now())
   updated_at              DateTime @updatedAt
+  pages                   Page[]
 
   @@map("users")
+}
+
+model Page {
+  id         Int      @id @default(autoincrement())
+  path       String   @unique
+  data       Json
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  deleted_at DateTime?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([user_id])
+  @@index([path, deleted_at])
+  @@map("pages")
 }

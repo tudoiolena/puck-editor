@@ -39,7 +39,7 @@ export async function loader({ request }: { request: Request }) {
     }
 
     // Get page data for Puck
-    const pageData = await resolvePage('/dashboard');
+    const pageData = await resolvePage('/dashboard', user.id);
 
     return { user, pageData };
   } catch (error) {

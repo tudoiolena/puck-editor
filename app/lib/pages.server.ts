@@ -2,145 +2,50 @@ import type { Data } from "@measured/puck";
 import { prisma } from "./db";
 
 export interface Page {
-  id: string;
+  id: number;
   path: string;
   data: Data;
+  userId: number;
 }
 
-// In-memory storage for demo purposes
-// In production, you would use a database
-const pages: Record<string, Data> = {
-  "/dashboard": {
-    content: [
-      {
-        type: "Hero",
-        props: {
-          id: "hero-1",
-          title: "Welcome to Your Dashboard",
-          description: "Build beautiful pages with our visual editor. Drag and drop components, customize everything, and publish instantly.",
-          align: "center",
-          padding: "80px",
-        },
-      },
-      {
-        type: "VerticalSpace",
-        props: {
-          id: "space-1",
-          size: "64px",
-        },
-      },
-      {
-        type: "Heading",
-        props: {
-          id: "heading-1",
-          text: "Key Features",
-          size: "3xl",
-          align: "center",
-        },
-      },
-      {
-        type: "VerticalSpace",
-        props: {
-          id: "space-2",
-          size: "32px",
-        },
-      },
-      {
-        type: "Flex",
-        props: {
-          id: "flex-1",
-          items: [
-            {
-              title: "🎨 Visual Editor",
-              description: "Intuitive drag-and-drop interface for building pages",
-            },
-            {
-              title: "⚡ Fast & Modern",
-              description: "Built with the latest web technologies for optimal performance",
-            },
-            {
-              title: "🔧 Customizable",
-              description: "Every component can be tailored to your exact needs",
-            },
-          ],
-          minItemWidth: 280,
-        },
-      },
-      {
-        type: "VerticalSpace",
-        props: {
-          id: "space-3",
-          size: "64px",
-        },
-      },
-      {
-        type: "Card",
-        props: {
-          id: "card-1",
-          title: "Get Started Today",
-          description: "Click the 'Edit Page' button above to start customizing this dashboard with our visual editor.",
-          icon: "🚀",
-          mode: "card",
-        },
-      },
-      {
-        type: "VerticalSpace",
-        props: {
-          id: "space-4",
-          size: "32px",
-        },
-      },
-      {
-        type: "ButtonGroup",
-        props: {
-          id: "buttons-1",
-          buttons: [
-            {
-              label: "View Documentation",
-              href: "#docs",
-              variant: "primary",
-            },
-            {
-              label: "Browse Components",
-              href: "#components",
-              variant: "secondary",
-            },
-          ],
-          align: "center",
-        },
-      },
-    ],
-    root: {
-      props: {
-        title: "Dashboard",
-      },
+/**
+ * Get a page by path (only non-deleted pages)
+ */
+export async function getPage(path: string, userId: number): Promise<Data | null> {
+  const page = await prisma.page.findFirst({
+    where: {
+      path,
+      user_id: userId,
+      deleted_at: null,
     },
-  },
-};
+  });
 
-export async function getPage(path: string): Promise<Data | null> {
-  // TODO: Fetch from database
-  // const page = await prisma.page.findUnique({
-  //   where: { path },
-  // });
-  // return page?.data || null;
-
-  return pages[path] || null;
+  return page ? (page.data as Data) : null;
 }
 
-export async function savePage(path: string, data: Data): Promise<void> {
-  // TODO: Save to database
-  // await prisma.page.upsert({
-  //   where: { path },
-  //   update: { data },
-  //   create: { path, data },
-  // });
-
-  pages[path] = data;
+/**
+ * Save a page (create or update)
+ */
+export async function savePage(path: string, data: Data, userId: number): Promise<void> {
+  await prisma.page.upsert({
+    where: { path },
+    update: { 
+      data: data as any,
+      updated_at: new Date(),
+    },
+    create: { 
+      path, 
+      data: data as any,
+      user_id: userId,
+    },
+  });
 }
 
-export async function resolvePage(path: string): Promise<Data> {
-  const data = await getPage(path);
+/**
+ * Resolve a page - returns the page data or a default empty page
+ */
+export async function resolvePage(path: string, userId: number): Promise<Data> {
+  const data = await getPage(path, userId);
   
   if (!data) {
     // Return default empty page structure
@@ -155,5 +60,43 @@ export async function resolvePage(path: string): Promise<Data> {
   }
   
   return data;
+}
+
+/**
+ * Soft delete a page
+ */
+export async function deletePage(path: string, userId: number): Promise<void> {
+  await prisma.page.updateMany({
+    where: {
+      path,
+      user_id: userId,
+      deleted_at: null,
+    },
+    data: {
+      deleted_at: new Date(),
+    },
+  });
+}
+
+/**
+ * Get all pages for a user (non-deleted)
+ */
+export async function getUserPages(userId: number): Promise<Page[]> {
+  const pages = await prisma.page.findMany({
+    where: {
+      user_id: userId,
+      deleted_at: null,
+    },
+    orderBy: {
+      updated_at: 'desc',
+    },
+  });
+
+  return pages.map(page => ({
+    id: page.id,
+    path: page.path,
+    data: page.data as Data,
+    userId: page.user_id,
+  }));
 }
 
