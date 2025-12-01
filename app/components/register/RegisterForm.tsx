@@ -9,6 +9,7 @@ import { ConfirmPasswordField } from './ConfirmPasswordField';
 import { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
 import { RegistrationSuccess } from './RegistrationSuccess';
 import { validateRegisterForm, hasErrors, type RegisterFormData, type RegisterFormErrors } from './registerValidation';
+import { ROUTES } from '../../constants/routes';
 
 export function RegisterForm() {
   const [searchParams] = useSearchParams();
@@ -128,7 +129,7 @@ export function RegisterForm() {
         <Box className="mt-6 text-center">
           <Typography variant="body2" className="text-gray-600">
             Already have an account?{' '}
-            <Link to="/login" className="text-purple-600 hover:text-purple-800 font-semibold no-underline">
+            <Link to={ROUTES.LOGIN} className="text-purple-600 hover:text-purple-800 font-semibold no-underline">
               Sign in
             </Link>
           </Typography>

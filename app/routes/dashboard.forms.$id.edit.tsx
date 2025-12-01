@@ -3,9 +3,10 @@ import "@measured/puck/puck.css";
 import { useSubmit } from "react-router";
 import { redirect } from "react-router";
 import type { Route } from "./+types/dashboard.forms.$id.edit";
-import { config } from "../puck.config";
+import { config } from "../puck/config";
 import { getUserIdFromRequest } from "../lib/auth";
 import { getForm, saveFormContent } from "../lib/forms.server";
+import { ROUTES } from "../constants/routes";
 
 export function meta({ loaderData }: Route.MetaArgs) {
   return [
@@ -18,19 +19,19 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const userId = getUserIdFromRequest(request);
   
   if (!userId) {
-    return redirect('/login');
+    return redirect(ROUTES.LOGIN);
   }
 
   const formId = parseInt(params.id || '');
   
   if (isNaN(formId)) {
-    return redirect('/dashboard');
+    return redirect(ROUTES.DASHBOARD);
   }
 
   const form = await getForm(formId, userId);
   
   if (!form) {
-    return redirect('/dashboard');
+    return redirect(ROUTES.DASHBOARD);
   }
 
   return { 
@@ -46,13 +47,13 @@ export async function action({ request, params }: Route.ActionArgs) {
   const userId = getUserIdFromRequest(request);
   
   if (!userId) {
-    return redirect('/login');
+    return redirect(ROUTES.LOGIN);
   }
 
   const formId = parseInt(params.id || '');
   
   if (isNaN(formId)) {
-    return redirect('/dashboard');
+    return redirect(ROUTES.DASHBOARD);
   }
 
   const formData = await request.formData();
@@ -63,7 +64,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     await saveFormContent(formId, userId, data);
   }
   
-  return redirect(`/dashboard`);
+  return redirect(ROUTES.DASHBOARD);
 }
 
 export default function FormEditor({ loaderData }: Route.ComponentProps) {

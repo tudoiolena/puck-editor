@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, Paper, Typography, Alert, CircularProgress, Button } from '@mui/material';
 import { CheckCircle, Error } from '@mui/icons-material';
 import { useSearchParams, Link, useFetcher } from 'react-router';
+import { ROUTES } from '../../constants/routes';
 
 interface VerificationResult {
   success: boolean;
@@ -69,7 +70,7 @@ export function VerifyEmailHandler() {
           </Alert>
           <Button
             component={Link}
-            to="/register"
+            to={ROUTES.REGISTER}
             variant="contained"
             className="bg-blue-600 hover:bg-blue-700"
           >
@@ -94,7 +95,7 @@ export function VerifyEmailHandler() {
             </Alert>
             <Button
               component={Link}
-              to="/login"
+              to={ROUTES.LOGIN}
               variant="contained"
               className="bg-green-600 hover:bg-green-700"
             >
@@ -112,7 +113,7 @@ export function VerifyEmailHandler() {
             </Alert>
             <Button
               component={Link}
-              to="/register"
+              to={ROUTES.REGISTER}
               variant="contained"
               className="bg-blue-600 hover:bg-blue-700"
             >

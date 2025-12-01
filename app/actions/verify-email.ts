@@ -1,5 +1,5 @@
 import { verifyVerificationToken } from '../lib/auth';
-import { prisma } from '../lib/db';
+import { prisma } from '../lib/db.server';
 
 export async function action({ request }: { request: Request }) {
   const formData = await request.formData();

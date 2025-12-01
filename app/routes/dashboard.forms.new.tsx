@@ -7,6 +7,7 @@ import type { Route } from './+types/dashboard.forms.new';
 import { DashboardAppBar } from '../components/dashboard/DashboardAppBar';
 import { getUserIdFromRequest } from '../lib/auth';
 import { createForm, generateUniqueSlug } from '../lib/forms.server';
+import { ROUTES } from '../constants/routes';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -19,7 +20,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const userId = getUserIdFromRequest(request);
   
   if (!userId) {
-    return redirect('/login');
+    return redirect(ROUTES.LOGIN);
   }
 
   return { userId };
@@ -29,7 +30,7 @@ export async function action({ request }: Route.ActionArgs) {
   const userId = getUserIdFromRequest(request);
   
   if (!userId) {
-    return redirect('/login');
+    return redirect(ROUTES.LOGIN);
   }
 
   const formData = await request.formData();
@@ -57,7 +58,7 @@ export async function action({ request }: Route.ActionArgs) {
     });
 
     // Redirect to edit page
-    return redirect(`/dashboard/forms/${form.id}/edit`);
+    return redirect(ROUTES.FORMS.EDIT(form.id));
   } catch (error) {
     console.error('Error creating form:', error);
     return { error: 'Failed to create form. Please try again.' };
@@ -94,7 +95,7 @@ export default function NewForm({ loaderData }: Route.ComponentProps) {
         <Box className="mb-6">
           <Button
             component={Link}
-            to="/dashboard"
+            to={ROUTES.DASHBOARD}
             startIcon={<ArrowBack />}
             className="mb-4 text-gray-600"
           >
@@ -164,7 +165,7 @@ export default function NewForm({ loaderData }: Route.ComponentProps) {
               <Box className="flex gap-3 justify-end pt-4">
                 <Button
                   component={Link}
-                  to="/dashboard"
+                  to={ROUTES.DASHBOARD}
                   variant="outlined"
                   disabled={isSubmitting}
                 >

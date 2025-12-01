@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Link, useFetcher } from 'react-router';
-import { Box, Button, Typography, Card, CardContent, CardActions, Chip } from '@mui/material';
-import { Edit, Delete, ContentCopy, Visibility, VisibilityOff, List, OpenInNew } from '@mui/icons-material';
+import { ROUTES } from '../../constants/routes';
+import { Box, Button, Typography, Card, CardContent, CardActions, Chip, TextField, InputAdornment, IconButton, Snackbar, Alert } from '@mui/material';
+import { Edit, Delete, ContentCopy, Visibility, VisibilityOff, List, OpenInNew, Link as LinkIcon, Check } from '@mui/icons-material';
 
 interface FormCardProps {
   form: {
@@ -18,6 +20,20 @@ interface FormCardProps {
 }
 
 export function FormCard({ form, onDelete, onCopy, onTogglePublish, isLoading }: FormCardProps) {
+  const [copied, setCopied] = useState(false);
+  const [showLink, setShowLink] = useState(false);
+  const publicUrl = typeof window !== 'undefined' ? `${window.location.origin}/f/${form.slug}` : `/f/${form.slug}`;
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
   return (
     <Card className="h-full flex flex-col hover:shadow-xl transition-shadow">
       <CardContent className="flex-grow">
@@ -37,10 +53,47 @@ export function FormCard({ form, onDelete, onCopy, onTogglePublish, isLoading }:
             {form.description}
           </Typography>
         )}
+        
+        {/* Public Link Display */}
+        {form.isPublished && (
+          <Box className="mb-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <Box className="flex items-center justify-between mb-2">
+              <Typography variant="caption" className="font-semibold text-green-800">
+                Public Form Link:
+              </Typography>
+              <IconButton
+                size="small"
+                onClick={handleCopyLink}
+                className="text-green-600"
+                title="Copy link"
+              >
+                {copied ? <Check fontSize="small" /> : <ContentCopy fontSize="small" />}
+              </IconButton>
+            </Box>
+            <TextField
+              fullWidth
+              size="small"
+              value={publicUrl}
+              InputProps={{ readOnly: true }}
+              onClick={(e) => (e.target as HTMLInputElement).select()}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LinkIcon className="text-green-600" fontSize="small" />
+                    </InputAdornment>
+                  ),
+                  className: 'text-xs font-mono',
+                },
+              }}
+            />
+          </Box>
+        )}
+
         <Box className="mb-3 flex gap-2">
           <Button
             component={Link}
-            to={`/dashboard/forms/${form.id}/submissions`}
+            to={ROUTES.FORMS.SUBMISSIONS(form.id)}
             size="small"
             startIcon={<List />}
             variant="outlined"
@@ -51,7 +104,7 @@ export function FormCard({ form, onDelete, onCopy, onTogglePublish, isLoading }:
           {form.isPublished && (
             <Button
               component="a"
-              href={`/f/${form.slug}`}
+              href={ROUTES.PUBLIC_FORM(form.slug)}
               target="_blank"
               rel="noopener noreferrer"
               size="small"
@@ -75,7 +128,7 @@ export function FormCard({ form, onDelete, onCopy, onTogglePublish, isLoading }:
         <Box>
           <Button
             component={Link}
-            to={`/dashboard/forms/${form.id}/edit`}
+            to={ROUTES.FORMS.EDIT(form.id)}
             size="small"
             startIcon={<Edit />}
             className="text-blue-600"

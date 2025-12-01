@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router';
+import { Link, useSearchParams, useNavigate, Form, useActionData } from 'react-router';
 import {
   Box,
   Button,
@@ -18,7 +18,11 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff, Lock, CheckCircle, Cancel } from '@mui/icons-material';
 import type { Route } from './+types/reset-password';
-import { authAPI, validatePassword, getPasswordStrength } from '../utils/auth';
+import { validatePassword, getPasswordStrength } from '../utils/auth';
+import { action } from '../actions/reset-password';
+import { ROUTES } from '../constants/routes';
+
+export { action };
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -30,12 +34,12 @@ export function meta({}: Route.MetaArgs) {
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const actionData = useActionData<typeof action>();
   const token = searchParams.get('token');
   
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
     password: '',
@@ -52,7 +56,6 @@ export default function ResetPassword() {
   const handleChange = (field: string) => (event: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: event.target.value });
     setFormErrors({ ...formErrors, [field]: '' });
-    setError(null);
   };
 
   const validateForm = (): boolean => {
@@ -77,41 +80,18 @@ export default function ResetPassword() {
     return !errors.password && !errors.confirmPassword;
   };
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    
+  const handleSubmit = (event: FormEvent) => {
     if (!token) {
-      setError('Invalid or missing reset token. Please request a new password reset link.');
+      event.preventDefault();
       return;
     }
 
     if (!validateForm()) {
+      event.preventDefault();
       return;
     }
 
     setLoading(true);
-    setError(null);
-
-    try {
-      const result = await authAPI.resetPassword({
-        token,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
-      });
-      
-      if (result.success) {
-        setSuccess(true);
-        setTimeout(() => {
-          navigate('/login', { state: { message: 'Password reset successful! You can now log in with your new password.' } });
-        }, 3000);
-      } else {
-        setError(result.message || 'Failed to reset password. Please try again.');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred. Please try again.');
-    } finally {
-      setLoading(false);
-    }
   };
 
   const getPasswordStrengthColor = () => {
@@ -145,7 +125,7 @@ export default function ResetPassword() {
             <Button
               variant="contained"
               component={Link}
-              to="/forgot-password"
+              to={ROUTES.FORGOT_PASSWORD}
               className="bg-blue-600 hover:bg-blue-700 mr-2"
             >
               Request New Link
@@ -156,7 +136,8 @@ export default function ResetPassword() {
     );
   }
 
-  if (success) {
+  // Show success state if action was successful
+  if (actionData?.success || success) {
     return (
       <Box className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 p-4">
         <Paper elevation={3} className="w-full max-w-md p-8 rounded-xl">
@@ -171,9 +152,14 @@ export default function ResetPassword() {
             <Typography variant="body2" className="text-gray-600 mb-4">
               You can now log in with your new password.
             </Typography>
-            <Typography variant="body2" className="text-gray-500 mt-4">
-              Redirecting to login page...
-            </Typography>
+            <Button
+              variant="contained"
+              component={Link}
+              to={ROUTES.LOGIN}
+              className="bg-blue-600 hover:bg-blue-700 mt-4"
+            >
+              Go to Login Page
+            </Button>
           </Box>
         </Paper>
       </Box>
@@ -192,23 +178,26 @@ export default function ResetPassword() {
           </Typography>
         </Box>
 
-        {error && (
-          <Alert severity="error" className="mb-4" onClose={() => setError(null)}>
-            {error}
+        {actionData && !actionData.success && (
+          <Alert severity="error" className="mb-4">
+            {actionData.message}
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <Box className="space-y-4">
+        <Form method="post" onSubmit={handleSubmit}>
+          <input type="hidden" name="token" value={token || ''} />
+          <Box>
             <TextField
               fullWidth
               label="New Password"
               type={showPassword ? 'text' : 'password'}
+              name="password"
               value={formData.password}
               onChange={handleChange('password')}
               error={!!formErrors.password}
               helperText={formErrors.password}
-              InputProps={{
+              slotProps={{
+                input: {
                 startAdornment: (
                   <InputAdornment position="start">
                     <Lock className="text-gray-400" />
@@ -225,13 +214,15 @@ export default function ResetPassword() {
                     </IconButton>
                   </InputAdornment>
                 ),
+                },
               }}
               disabled={loading}
               autoFocus
+              sx={{ mb: 3 }}
             />
 
             {formData.password && (
-              <Box className="mt-2">
+              <Box sx={{ mb: 4 }}>
                 <Box className="flex justify-between items-center mb-1">
                   <Typography variant="caption" className="text-gray-600">
                     Password Strength:
@@ -276,11 +267,13 @@ export default function ResetPassword() {
               fullWidth
               label="Confirm New Password"
               type={showConfirmPassword ? 'text' : 'password'}
+              name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange('confirmPassword')}
               error={!!formErrors.confirmPassword}
               helperText={formErrors.confirmPassword}
-              InputProps={{
+              slotProps={{
+                input: {
                 startAdornment: (
                   <InputAdornment position="start">
                     <Lock className="text-gray-400" />
@@ -297,8 +290,10 @@ export default function ResetPassword() {
                     </IconButton>
                   </InputAdornment>
                 ),
+                },
               }}
               disabled={loading}
+              sx={{ mb: 4 }}
             />
 
             <Button
@@ -307,7 +302,7 @@ export default function ResetPassword() {
               variant="contained"
               size="large"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 py-3 mt-4"
+              className="bg-blue-600 hover:bg-blue-700 py-3"
             >
               {loading ? (
                 <>
@@ -319,7 +314,7 @@ export default function ResetPassword() {
               )}
             </Button>
           </Box>
-        </form>
+        </Form>
 
         <Box className="mt-6 text-center">
           <Typography variant="body2" className="text-gray-600">

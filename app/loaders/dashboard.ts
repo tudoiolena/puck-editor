@@ -1,7 +1,8 @@
 import { verifyAuthToken } from '../lib/auth';
-import { prisma } from '../lib/db';
+import { prisma } from '../lib/db.server';
 import { getUserForms } from '../lib/forms.server';
 import { redirect } from 'react-router';
+import { ROUTES } from '../constants/routes';
 
 export async function loader({ request }: { request: Request }) {
   try {
@@ -13,13 +14,13 @@ export async function loader({ request }: { request: Request }) {
       ?.split('=')[1];
 
     if (!authToken) {
-      return redirect('/login');
+      return redirect(ROUTES.LOGIN);
     }
 
     // Verify the token
     const decoded = verifyAuthToken(authToken);
     if (!decoded) {
-      return redirect('/login');
+      return redirect(ROUTES.LOGIN);
     }
 
     // Get user data
@@ -30,12 +31,13 @@ export async function loader({ request }: { request: Request }) {
         email: true,
         first_name: true,
         last_name: true,
+        profile_picture: true,
         email_verified: true,
       },
     });
 
     if (!user) {
-      return redirect('/login');
+      return redirect(ROUTES.LOGIN);
     }
 
     // Get user's forms

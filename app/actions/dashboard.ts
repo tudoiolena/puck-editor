@@ -1,6 +1,7 @@
 import { redirect } from 'react-router';
 import { getUserIdFromRequest } from '../lib/auth';
 import { deleteForm, copyForm, toggleFormPublish } from '../lib/forms.server';
+import { ROUTES } from '../constants/routes';
 
 export async function action({ request }: { request: Request }) {
   const formData = await request.formData();
@@ -8,7 +9,7 @@ export async function action({ request }: { request: Request }) {
 
   // Handle logout
   if (action === 'logout') {
-    return redirect('/login', {
+    return redirect(ROUTES.LOGIN, {
       headers: {
         'Set-Cookie': 'auth-token=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0',
       },
@@ -18,7 +19,7 @@ export async function action({ request }: { request: Request }) {
   // Get user ID for form operations
   const userId = getUserIdFromRequest(request);
   if (!userId) {
-    return redirect('/login');
+    return redirect(ROUTES.LOGIN);
   }
 
   // Handle form operations

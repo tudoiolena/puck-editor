@@ -17,7 +17,8 @@ import type { Route } from './+types/dashboard.forms.$id.submissions.$submission
 import { DashboardAppBar } from '../components/dashboard/DashboardAppBar';
 import { getUserIdFromRequest } from '../lib/auth';
 import { getForm, getSubmission } from '../lib/forms.server';
-import { prisma } from '../lib/db';
+import { prisma } from '../lib/db.server';
+import { ROUTES } from '../constants/routes';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -30,26 +31,26 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const userId = getUserIdFromRequest(request);
   
   if (!userId) {
-    return redirect('/login');
+    return redirect(ROUTES.LOGIN);
   }
 
   const formId = parseInt(params.id || '');
   const submissionId = parseInt(params.submissionId || '');
   
   if (isNaN(formId) || isNaN(submissionId)) {
-    return redirect('/dashboard');
+    return redirect(ROUTES.DASHBOARD);
   }
 
   const form = await getForm(formId, userId);
   
   if (!form) {
-    return redirect('/dashboard');
+    return redirect(ROUTES.DASHBOARD);
   }
 
   const submission = await getSubmission(submissionId, formId, userId);
   
   if (!submission) {
-    return redirect(`/dashboard/forms/${formId}/submissions`);
+    return redirect(ROUTES.FORMS.SUBMISSIONS(formId));
   }
 
   // Get user for app bar
@@ -98,7 +99,7 @@ export default function SubmissionDetail({ loaderData }: Route.ComponentProps) {
         <Box className="mb-6">
           <Button
             component={Link}
-            to={`/dashboard/forms/${loaderData.form.id}/submissions`}
+            to={ROUTES.FORMS.SUBMISSIONS(loaderData.form.id)}
             startIcon={<ArrowBack />}
             className="mb-4 text-gray-600"
           >
@@ -197,7 +198,7 @@ export default function SubmissionDetail({ loaderData }: Route.ComponentProps) {
         <Box className="mt-6 flex justify-end gap-3">
           <Button
             component={Link}
-            to={`/dashboard/forms/${loaderData.form.id}/submissions`}
+            to={ROUTES.FORMS.SUBMISSIONS(loaderData.form.id)}
             variant="outlined"
           >
             View All Submissions

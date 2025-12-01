@@ -1,7 +1,7 @@
 import { registerSchema } from '../lib/validation';
 import { hashPassword, generateVerificationToken } from '../lib/auth';
 import { sendVerificationEmail } from '../lib/email';
-import { prisma } from '../lib/db';
+import { prisma } from '../lib/db.server';
 import { redirect } from 'react-router';
 
 export async function action({ request }: { request: Request }) {

@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { Box, Button, Typography, Card, CardContent } from '@mui/material';
 import { Add } from '@mui/icons-material';
+import { ROUTES } from '../../constants/routes';
 
 export function EmptyState() {
   return (
@@ -14,7 +15,7 @@ export function EmptyState() {
         </Typography>
         <Button
           component={Link}
-          to="/dashboard/forms/new"
+          to={ROUTES.FORMS.NEW}
           variant="contained"
           startIcon={<Add />}
           className="bg-blue-600 hover:bg-blue-700 text-white"

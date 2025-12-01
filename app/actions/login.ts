@@ -1,7 +1,8 @@
 import { loginSchema } from '../lib/validation';
 import { verifyPassword, generateAuthToken } from '../lib/auth';
-import { prisma } from '../lib/db';
+import { prisma } from '../lib/db.server';
 import { redirect } from 'react-router';
+import { ROUTES } from '../constants/routes';
 
 export async function action({ request }: { request: Request }) {
   const formData = await request.formData();
@@ -53,7 +54,7 @@ export async function action({ request }: { request: Request }) {
     // Create session (you can store this in a cookie or database)
     // For now, we'll redirect to dashboard with user data
     console.log('Redirecting to dashboard...');
-    return redirect('/dashboard', {
+    return redirect(ROUTES.DASHBOARD, {
       headers: {
         'Set-Cookie': `auth-token=${authToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`, // 7 days
       },

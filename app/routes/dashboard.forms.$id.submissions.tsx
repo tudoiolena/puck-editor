@@ -21,7 +21,8 @@ import type { Route } from './+types/dashboard.forms.$id.submissions';
 import { DashboardAppBar } from '../components/dashboard/DashboardAppBar';
 import { getUserIdFromRequest } from '../lib/auth';
 import { getForm, getFormSubmissions } from '../lib/forms.server';
-import { prisma } from '../lib/db';
+import { prisma } from '../lib/db.server';
+import { ROUTES } from '../constants/routes';
 
 export function meta({ loaderData }: Route.MetaArgs) {
   return [
@@ -34,19 +35,19 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const userId = getUserIdFromRequest(request);
   
   if (!userId) {
-    return redirect('/login');
+    return redirect(ROUTES.LOGIN);
   }
 
   const formId = parseInt(params.id || '');
   
   if (isNaN(formId)) {
-    return redirect('/dashboard');
+    return redirect(ROUTES.DASHBOARD);
   }
 
   const form = await getForm(formId, userId);
   
   if (!form) {
-    return redirect('/dashboard');
+    return redirect(ROUTES.DASHBOARD);
   }
 
   // Get user for app bar
@@ -162,7 +163,7 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
         <Box className="mb-6">
           <Button
             component={Link}
-            to="/dashboard"
+            to={ROUTES.DASHBOARD}
             startIcon={<ArrowBack />}
             className="mb-4 text-gray-600"
           >
@@ -203,8 +204,10 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
               onChange={(e) => setSearchTerm(e.target.value)}
               size="small"
               fullWidth
-              InputProps={{
+              slotProps={{
+                input: {
                 startAdornment: <Search className="mr-2 text-gray-400" />,
+                },
               }}
             />
             <TextField
@@ -243,7 +246,7 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
             </Typography>
             <Button
               component={Link}
-              to={`/f/${loaderData.form.slug}`}
+              to={ROUTES.PUBLIC_FORM(loaderData.form.slug)}
               variant="outlined"
             >
               View Form
@@ -278,7 +281,7 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
                       <Tooltip title="View Details">
                         <IconButton
                           component={Link}
-                          to={`/dashboard/forms/${loaderData.form.id}/submissions/${submission.id}`}
+                          to={ROUTES.FORMS.SUBMISSION_DETAIL(loaderData.form.id, submission.id)}
                           size="small"
                           className="text-blue-600"
                         >

@@ -1,5 +1,6 @@
 import type { Data } from "@measured/puck";
-import { prisma } from "./db";
+import { prisma } from "./db.server";
+import { sendFormSubmissionEmail } from "./email";
 
 export interface Form {
   id: number;
@@ -305,6 +306,32 @@ export async function submitForm(
     },
   });
 
+  // Send email notification if enabled
+  const form = await getForm(formId, 0); // We need the form settings, but we don't have userId here.
+  // Actually, we should fetch the form with the user to get the email
+  const formWithUser = await prisma.form.findUnique({
+    where: { id: formId },
+    include: { user: true }
+  });
+
+  if (formWithUser) {
+    const settings = formWithUser.settings as FormSettings;
+
+    if (settings?.emailNotifications) {
+      const recipientEmail = settings.notificationEmail || formWithUser.user.email;
+      const dashboardUrl = `${process.env.APP_URL}/dashboard/forms/${formId}/submissions/${submission.id}`;
+
+      // Send email asynchronously (don't await to not block response)
+      sendFormSubmissionEmail(
+        recipientEmail,
+        formWithUser.title,
+        email,
+        submissionData,
+        dashboardUrl
+      ).catch(err => console.error('Failed to send notification email:', err));
+    }
+  }
+
   return {
     id: submission.id,
     formId: submission.form_id,
@@ -430,5 +457,103 @@ export async function generateUniqueSlug(title: string, userId: number): Promise
   }
 
   return slug;
+}
+
+/**
+ * Get user statistics
+ */
+export async function getUserStatistics(userId: number) {
+  // Get all forms for user
+  const forms = await prisma.form.findMany({
+    where: {
+      user_id: userId,
+      deleted_at: null,
+    },
+    include: {
+      submissions: true,
+    },
+  });
+
+  // Calculate basic stats
+  const totalForms = forms.length;
+  const publishedForms = forms.filter(form => form.is_published).length;
+  const draftForms = totalForms - publishedForms;
+  const totalSubmissions = forms.reduce((sum, form) => sum + form.submissions.length, 0);
+
+  // Get submissions by date for last 30 days
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const recentSubmissions = await prisma.formSubmission.findMany({
+    where: {
+      form: {
+        user_id: userId,
+        deleted_at: null,
+      },
+      submitted_at: {
+        gte: thirtyDaysAgo,
+      },
+    },
+    orderBy: {
+      submitted_at: 'asc',
+    },
+  });
+
+  // Group submissions by date
+  const submissionsByDate = recentSubmissions.reduce((acc, submission) => {
+    const date = submission.submitted_at.toISOString().split('T')[0];
+    acc[date] = (acc[date] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Get form performance data
+  const formPerformance = forms.map(form => ({
+    id: form.id,
+    title: form.title,
+    slug: form.slug,
+    isPublished: form.is_published,
+    submissionCount: form.submissions.length,
+    lastSubmission: form.submissions.length > 0
+      ? new Date(Math.max(...form.submissions.map(s => s.submitted_at.getTime())))
+      : null,
+  })).sort((a, b) => b.submissionCount - a.submissionCount);
+
+  // Calculate conversion rates (simplified - assumes published forms get traffic)
+  const conversionData = formPerformance.map(form => ({
+    ...form,
+    conversionRate: form.isPublished && totalSubmissions > 0
+      ? (form.submissionCount / totalSubmissions * 100).toFixed(1)
+      : '0',
+  }));
+
+  // Get daily submission counts for chart
+  const dailySubmissions = [];
+  for (let i = 29; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+    dailySubmissions.push({
+      date: dateStr,
+      count: submissionsByDate[dateStr] || 0,
+    });
+  }
+
+  return {
+    totalForms,
+    publishedForms,
+    draftForms,
+    totalSubmissions,
+    formPerformance,
+    conversionData,
+    dailySubmissions,
+    recentActivity: {
+      last7Days: recentSubmissions.filter(s => {
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        return s.submitted_at >= weekAgo;
+      }).length,
+      last30Days: recentSubmissions.length,
+    },
+  };
 }
 

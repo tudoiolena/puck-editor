@@ -18,12 +18,14 @@ export function EmailField({ value, error, loading, onChange }: EmailFieldProps)
       onChange={(e) => onChange(e.target.value)}
       error={!!error}
       helperText={error}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <Email className="text-gray-400" />
-          </InputAdornment>
-        ),
+      slotProps={{
+        input: {
+          startAdornment: (
+            <InputAdornment position="start">
+              <Email />
+            </InputAdornment>
+          ),
+        },
       }}
       disabled={loading}
     />

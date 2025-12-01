@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { Box, Button, Typography } from '@mui/material';
 import { Add } from '@mui/icons-material';
+import { ROUTES } from '../../constants/routes';
 
 export function DashboardHeader() {
   return (
@@ -15,7 +16,7 @@ export function DashboardHeader() {
       </Box>
       <Button
         component={Link}
-        to="/dashboard/forms/new"
+        to={ROUTES.FORMS.NEW}
         variant="contained"
         startIcon={<Add />}
         className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg"

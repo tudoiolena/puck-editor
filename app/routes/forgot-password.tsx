@@ -1,5 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
-import { Link } from 'react-router';
+import { Link, Form, useActionData } from 'react-router';
+import { ROUTES } from '../constants/routes';
 import {
   Box,
   Button,
@@ -12,7 +13,10 @@ import {
 } from '@mui/material';
 import { Email, ArrowBack, CheckCircle } from '@mui/icons-material';
 import type { Route } from './+types/forgot-password';
-import { authAPI, validateEmail } from '../utils/auth';
+import { validateEmail } from '../utils/auth';
+import { action } from '../actions/forgot-password';
+
+export { action };
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -22,8 +26,8 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function ForgotPassword() {
+  const actionData = useActionData<typeof action>();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -31,7 +35,6 @@ export default function ForgotPassword() {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
     setEmailError('');
-    setError(null);
   };
 
   const validateForm = (): boolean => {
@@ -48,32 +51,17 @@ export default function ForgotPassword() {
     return true;
   };
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    
+  // Handle form submission with React Router Form
+  const handleSubmit = (event: FormEvent) => {
     if (!validateForm()) {
+      event.preventDefault();
       return;
     }
-
     setLoading(true);
-    setError(null);
-
-    try {
-      const result = await authAPI.forgotPassword({ email });
-      
-      if (result.success) {
-        setSuccess(true);
-      } else {
-        setError(result.message || 'Failed to send reset email. Please try again.');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred. Please try again.');
-    } finally {
-      setLoading(false);
-    }
   };
 
-  if (success) {
+  // Show success state if action was successful
+  if (actionData?.success || success) {
     return (
       <Box className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 p-4">
         <Paper elevation={3} className="w-full max-w-md p-8 rounded-xl">
@@ -94,7 +82,7 @@ export default function ForgotPassword() {
             <Button
               variant="contained"
               component={Link}
-              to="/login"
+              to={ROUTES.LOGIN}
               startIcon={<ArrowBack />}
               className="bg-green-600 hover:bg-green-700"
             >
@@ -129,31 +117,35 @@ export default function ForgotPassword() {
           </Typography>
         </Box>
 
-        {error && (
-          <Alert severity="error" className="mb-4" onClose={() => setError(null)}>
-            {error}
+        {actionData && !actionData.success && (
+          <Alert severity="error" className="mb-4">
+            {actionData.message}
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <Box className="space-y-4">
+        <Form method="post" onSubmit={handleSubmit}>
+          <Box>
             <TextField
               fullWidth
               label="Email Address"
               type="email"
+              name="email"
               value={email}
               onChange={handleChange}
               error={!!emailError}
               helperText={emailError}
-              InputProps={{
+              slotProps={{
+                input: {
                 startAdornment: (
                   <InputAdornment position="start">
                     <Email className="text-gray-400" />
                   </InputAdornment>
                 ),
+                },
               }}
               disabled={loading}
               autoFocus
+              sx={{ mb: 4 }}
             />
 
             <Button
@@ -162,7 +154,7 @@ export default function ForgotPassword() {
               variant="contained"
               size="large"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 py-3 mt-4"
+              className="bg-blue-600 hover:bg-blue-700 py-3"
             >
               {loading ? (
                 <>
@@ -174,7 +166,7 @@ export default function ForgotPassword() {
               )}
             </Button>
           </Box>
-        </form>
+        </Form>
 
         <Box className="mt-6 text-center">
           <Typography variant="body2" className="text-gray-600">
