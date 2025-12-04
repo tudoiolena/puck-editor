@@ -27,8 +27,8 @@ export const ROUTES = {
   },
 
   // Public form routes
-  PUBLIC_FORM: (slug: string) => `/f/${slug}`,
-  PUBLIC_FORM_THANK_YOU: (slug: string) => `/f/${slug}/thank-you`,
+  PUBLIC_FORM: (slug: string) => `/share/${slug}`,
+  PUBLIC_FORM_THANK_YOU: (slug: string) => `/share/${slug}/thank-you`,
 
   // Upload routes
   UPLOAD: (filename: string) => `/uploads/${filename}`,

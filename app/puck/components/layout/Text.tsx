@@ -1,4 +1,7 @@
-export const Text = {
+import type { ComponentConfig } from '@measured/puck';
+import type { UserConfig } from '../../types/config';
+
+export const Text: ComponentConfig<UserConfig['Text']> = {
   fields: {
     text: {
       type: 'textarea' as const,

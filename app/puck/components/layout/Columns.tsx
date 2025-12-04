@@ -1,4 +1,7 @@
-export const Columns = {
+import type { ComponentConfig } from '@measured/puck';
+import type { UserConfig } from '../../types/config';
+
+export const Columns: ComponentConfig<UserConfig['Columns']> = {
   fields: {
     columns: {
       type: 'array' as const,

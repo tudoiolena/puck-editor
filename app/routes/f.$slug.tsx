@@ -162,7 +162,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     await submitForm(form.id, email || 'anonymous@example.com', submissionData, ipAddress);
 
     // Redirect to thank you page
-    return redirect(`/f/${slug}/thank-you`);
+    return redirect(`/share/${slug}/thank-you`);
   } catch (error) {
     console.error('Form submission error:', error);
     return { error: 'Failed to submit form. Please try again.' };

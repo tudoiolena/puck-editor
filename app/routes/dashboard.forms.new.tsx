@@ -140,7 +140,7 @@ export default function NewForm({ loaderData }: Route.ComponentProps) {
                     Form URL Preview:
                   </Typography>
                   <Typography variant="body2" className="text-blue-900 mt-1 font-mono">
-                    {window.location.origin}/f/{slugPreview}
+                    {window.location.origin}/share/{slugPreview}
                   </Typography>
                 </Box>
               )}

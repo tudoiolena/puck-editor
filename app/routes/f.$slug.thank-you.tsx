@@ -61,7 +61,7 @@ export default function ThankYou({ loaderData }: Route.ComponentProps) {
           {loaderData.slug && (
             <Button
               component={Link}
-              to={`/f/${loaderData.slug}`}
+              to={`/share/${loaderData.slug}`}
               variant="outlined"
               className="text-blue-600 border-blue-600"
             >

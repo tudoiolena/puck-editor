@@ -18,6 +18,6 @@ export default [
     'dashboard/forms/:id/submissions/:submissionId',
     'routes/dashboard.forms.$id.submissions.$submissionId.tsx'
   ),
-  route('f/:slug', 'routes/f.$slug.tsx'),
-  route('f/:slug/thank-you', 'routes/f.$slug.thank-you.tsx'),
+  route('share/:slug', 'routes/f.$slug.tsx'),
+  route('share/:slug/thank-you', 'routes/f.$slug.thank-you.tsx'),
 ] satisfies RouteConfig;

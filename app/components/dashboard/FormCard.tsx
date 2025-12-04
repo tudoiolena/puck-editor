@@ -43,7 +43,9 @@ interface FormCardProps {
 export function FormCard({ form, onDelete, onCopy, onTogglePublish, isLoading }: FormCardProps) {
   const [copied, setCopied] = useState(false);
   const publicUrl =
-    typeof window !== 'undefined' ? `${window.location.origin}/f/${form.slug}` : `/f/${form.slug}`;
+    typeof window !== 'undefined'
+      ? `${window.location.origin}/share/${form.slug}`
+      : `/share/${form.slug}`;
 
   const handleCopyLink = async () => {
     try {
@@ -95,10 +97,10 @@ export function FormCard({ form, onDelete, onCopy, onTogglePublish, isLoading }:
               fullWidth
               size="small"
               value={publicUrl}
-              InputProps={{ readOnly: true }}
               onClick={(e) => (e.target as HTMLInputElement).select()}
               slotProps={{
                 input: {
+                  readOnly: true,
                   startAdornment: (
                     <InputAdornment position="start">
                       <LinkIcon className="text-green-600" fontSize="small" />

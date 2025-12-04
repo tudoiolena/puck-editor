@@ -1,4 +1,7 @@
-export const CheckboxGroup = {
+import type { ComponentConfig } from '@measured/puck';
+import type { UserConfig } from '../../types/config';
+
+export const CheckboxGroup: ComponentConfig<UserConfig['CheckboxGroup']> = {
   fields: {
     name: { type: 'text' as const, label: 'Field Name' },
     label: { type: 'text' as const, label: 'Label' },

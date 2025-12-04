@@ -1,4 +1,7 @@
-export const Flex = {
+import type { ComponentConfig } from '@measured/puck';
+import type { UserConfig } from '../../types/config';
+
+export const Flex: ComponentConfig<UserConfig['Flex']> = {
   fields: {
     items: {
       type: 'array' as const,

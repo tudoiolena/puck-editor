@@ -1,4 +1,7 @@
-export const SubmitButton = {
+import type { ComponentConfig } from '@measured/puck';
+import type { UserConfig } from '../../types/config';
+
+export const SubmitButton: ComponentConfig<UserConfig['SubmitButton']> = {
   fields: {
     label: { type: 'text' as const, label: 'Button Label' },
     align: {

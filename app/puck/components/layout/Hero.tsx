@@ -1,6 +1,7 @@
+import type { ComponentConfig } from '@measured/puck';
 import type { UserConfig } from '../../types/config';
 
-export const Hero = {
+export const Hero: ComponentConfig<UserConfig['Hero']> = {
   fields: {
     title: {
       type: 'text' as const,

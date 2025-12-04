@@ -1,4 +1,7 @@
-export const RadioGroup = {
+import type { ComponentConfig } from '@measured/puck';
+import type { UserConfig } from '../../types/config';
+
+export const RadioGroup: ComponentConfig<UserConfig['RadioGroup']> = {
   fields: {
     name: { type: 'text' as const, label: 'Field Name' },
     label: { type: 'text' as const, label: 'Label' },

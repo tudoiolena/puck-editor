@@ -1,4 +1,7 @@
-export const Select = {
+import type { ComponentConfig } from '@measured/puck';
+import type { UserConfig } from '../../types/config';
+
+export const Select: ComponentConfig<UserConfig['Select']> = {
   fields: {
     name: { type: 'text' as const, label: 'Field Name' },
     label: { type: 'text' as const, label: 'Label' },

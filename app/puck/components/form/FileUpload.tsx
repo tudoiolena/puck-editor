@@ -1,4 +1,7 @@
-export const FileUpload = {
+import type { ComponentConfig } from '@measured/puck';
+import type { UserConfig } from '../../types/config';
+
+export const FileUpload: ComponentConfig<UserConfig['FileUpload']> = {
   fields: {
     name: { type: 'text' as const, label: 'Field Name' },
     label: { type: 'text' as const, label: 'Label' },

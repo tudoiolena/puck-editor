@@ -1,4 +1,7 @@
-export const VerticalSpace = {
+import type { ComponentConfig } from '@measured/puck';
+import type { UserConfig } from '../../types/config';
+
+export const VerticalSpace: ComponentConfig<UserConfig['VerticalSpace']> = {
   fields: {
     size: {
       type: 'select' as const,
