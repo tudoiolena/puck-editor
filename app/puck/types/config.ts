@@ -7,7 +7,7 @@ export type UserConfig = {
   Hero: {
     title: string;
     description: string;
-    align: "left" | "center";
+    align: 'left' | 'center';
     padding: string;
   };
   VerticalSpace: {
@@ -15,34 +15,34 @@ export type UserConfig = {
   };
   Heading: {
     text: string;
-    size: "xl" | "2xl" | "3xl" | "4xl" | "5xl";
-    align: "left" | "center" | "right";
+    size: 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
+    align: 'left' | 'center' | 'right';
   };
   Text: {
     text: string;
-    size: "sm" | "base" | "lg";
-    align: "left" | "center" | "right";
-    color: "default" | "muted";
+    size: 'sm' | 'base' | 'lg';
+    align: 'left' | 'center' | 'right';
+    color: 'default' | 'muted';
   };
   ButtonGroup: {
     buttons: Array<{
       label: string;
       href: string;
-      variant: "primary" | "secondary";
+      variant: 'primary' | 'secondary';
     }>;
-    align: "left" | "center" | "right";
+    align: 'left' | 'center' | 'right';
   };
   Columns: {
     columns: Array<{
       content: string;
     }>;
-    distribution: "auto" | "manual";
+    distribution: 'auto' | 'manual';
   };
   Card: {
     title: string;
     description: string;
     icon?: string;
-    mode: "flat" | "card";
+    mode: 'flat' | 'card';
   };
   Flex: {
     items: Array<{
@@ -104,7 +104,7 @@ export type UserConfig = {
   };
   SubmitButton: {
     label: string;
-    align: "left" | "center" | "right";
+    align: 'left' | 'center' | 'right';
   };
   FileUpload: {
     name: string;
@@ -115,4 +115,3 @@ export type UserConfig = {
     helperText?: string;
   };
 };
-

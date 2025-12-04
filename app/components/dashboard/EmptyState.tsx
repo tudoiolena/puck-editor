@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Box, Button, Typography, Card, CardContent } from '@mui/material';
+import { Button, Typography, Card, CardContent } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { ROUTES } from '../../constants/routes';
 
@@ -26,4 +26,3 @@ export function EmptyState() {
     </Card>
   );
 }
-

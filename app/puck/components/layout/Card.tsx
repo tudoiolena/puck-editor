@@ -1,36 +1,34 @@
 export const Card = {
   fields: {
     title: {
-      type: "text" as const,
+      type: 'text' as const,
     },
     description: {
-      type: "textarea" as const,
+      type: 'textarea' as const,
     },
     icon: {
-      type: "text" as const,
+      type: 'text' as const,
     },
     mode: {
-      type: "radio" as const,
+      type: 'radio' as const,
       options: [
-        { label: "Flat", value: "flat" },
-        { label: "Card", value: "card" },
+        { label: 'Flat', value: 'flat' },
+        { label: 'Card', value: 'card' },
       ],
     },
   },
   defaultProps: {
-    title: "Card Title",
-    description: "Card description",
-    icon: "⭐",
-    mode: "card" as const,
+    title: 'Card Title',
+    description: 'Card description',
+    icon: '⭐',
+    mode: 'card' as const,
   },
   render: (props) => {
     const { title, description, icon, mode } = props;
     return (
       <div
         className={`p-6 rounded-lg ${
-          mode === "card"
-            ? "bg-white shadow-lg border border-gray-100"
-            : "bg-transparent"
+          mode === 'card' ? 'bg-white shadow-lg border border-gray-100' : 'bg-transparent'
         }`}
       >
         {icon && <div className="text-4xl mb-4">{icon}</div>}
@@ -40,4 +38,3 @@ export const Card = {
     );
   },
 };
-

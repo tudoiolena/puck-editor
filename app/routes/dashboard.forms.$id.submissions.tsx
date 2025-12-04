@@ -32,20 +32,20 @@ export function meta({ loaderData }: Route.MetaArgs) {
 }
 
 export async function loader({ request, params }: Route.LoaderArgs) {
-  const userId = getUserIdFromRequest(request);
-  
+  const userId = await getUserIdFromRequest(request);
+
   if (!userId) {
     return redirect(ROUTES.LOGIN);
   }
 
   const formId = parseInt(params.id || '');
-  
+
   if (isNaN(formId)) {
     return redirect(ROUTES.DASHBOARD);
   }
 
   const form = await getForm(formId, userId);
-  
+
   if (!form) {
     return redirect(ROUTES.DASHBOARD);
   }
@@ -73,7 +73,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       description: form.description,
       slug: form.slug,
     },
-    submissions: submissions.map(sub => ({
+    submissions: submissions.map((sub) => ({
       id: sub.id,
       email: sub.email,
       submittedAt: sub.submittedAt.toISOString(),
@@ -87,14 +87,16 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
   const [dateFilter, setDateFilter] = useState('');
 
   // Filter submissions
-  const filteredSubmissions = loaderData.submissions.filter(submission => {
-    const matchesSearch = searchTerm === '' || 
+  const filteredSubmissions = loaderData.submissions.filter((submission) => {
+    const matchesSearch =
+      searchTerm === '' ||
       submission.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       JSON.stringify(submission.data).toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesDate = dateFilter === '' || 
+
+    const matchesDate =
+      dateFilter === '' ||
       new Date(submission.submittedAt).toISOString().split('T')[0] === dateFilter;
-    
+
     return matchesSearch && matchesDate;
   });
 
@@ -107,23 +109,19 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
 
     // Get all unique keys from all submissions
     const allKeys = new Set<string>();
-    filteredSubmissions.forEach(sub => {
-      Object.keys(sub.data).forEach(key => allKeys.add(key));
+    filteredSubmissions.forEach((sub) => {
+      Object.keys(sub.data).forEach((key) => allKeys.add(key));
     });
 
     // Create CSV header
     const headers = ['Submission ID', 'Email', 'Submitted At', ...Array.from(allKeys)];
-    
+
     // Create CSV rows
-    const rows = filteredSubmissions.map(sub => {
-      const row = [
-        sub.id,
-        sub.email,
-        new Date(sub.submittedAt).toLocaleString(),
-      ];
-      
+    const rows = filteredSubmissions.map((sub) => {
+      const row = [sub.id, sub.email, new Date(sub.submittedAt).toLocaleString()];
+
       // Add data columns
-      allKeys.forEach(key => {
+      allKeys.forEach((key) => {
         const value = sub.data[key];
         // Handle arrays (checkboxes)
         if (Array.isArray(value)) {
@@ -132,14 +130,14 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
           row.push(value || '');
         }
       });
-      
+
       return row;
     });
 
     // Create CSV content
     const csvContent = [
       headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(',')),
+      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
     ].join('\n');
 
     // Download CSV
@@ -177,7 +175,7 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
               <Typography variant="body1" className="text-gray-600 mb-1">
                 {loaderData.form.title}
               </Typography>
-              <Chip 
+              <Chip
                 label={`${filteredSubmissions.length} submission${filteredSubmissions.length !== 1 ? 's' : ''}`}
                 color="primary"
                 size="small"
@@ -206,7 +204,7 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
               fullWidth
               slotProps={{
                 input: {
-                startAdornment: <Search className="mr-2 text-gray-400" />,
+                  startAdornment: <Search className="mr-2 text-gray-400" />,
                 },
               }}
             />
@@ -240,7 +238,7 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
               No submissions yet
             </Typography>
             <Typography variant="body2" className="text-gray-500 mb-6">
-              {searchTerm || dateFilter 
+              {searchTerm || dateFilter
                 ? 'No submissions match your filters'
                 : 'Submissions will appear here once users fill out your form'}
             </Typography>
@@ -257,11 +255,21 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>ID</strong></TableCell>
-                  <TableCell><strong>Email</strong></TableCell>
-                  <TableCell><strong>Submitted</strong></TableCell>
-                  <TableCell><strong>Data Summary</strong></TableCell>
-                  <TableCell align="right"><strong>Actions</strong></TableCell>
+                  <TableCell>
+                    <strong>ID</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Email</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Submitted</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Data Summary</strong>
+                  </TableCell>
+                  <TableCell align="right">
+                    <strong>Actions</strong>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -269,9 +277,7 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
                   <TableRow key={submission.id} hover>
                     <TableCell>#{submission.id}</TableCell>
                     <TableCell>{submission.email}</TableCell>
-                    <TableCell>
-                      {new Date(submission.submittedAt).toLocaleString()}
-                    </TableCell>
+                    <TableCell>{new Date(submission.submittedAt).toLocaleString()}</TableCell>
                     <TableCell>
                       <Typography variant="body2" className="text-gray-600">
                         {Object.keys(submission.data).length} fields
@@ -299,8 +305,9 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
         {/* Footer Stats */}
         <Box className="mt-6 text-center">
           <Typography variant="caption" className="text-gray-500">
-            Total: {loaderData.submissions.length} submission{loaderData.submissions.length !== 1 ? 's' : ''}
-            {filteredSubmissions.length !== loaderData.submissions.length && 
+            Total: {loaderData.submissions.length} submission
+            {loaderData.submissions.length !== 1 ? 's' : ''}
+            {filteredSubmissions.length !== loaderData.submissions.length &&
               ` | Showing: ${filteredSubmissions.length}`}
           </Typography>
         </Box>
@@ -308,4 +315,3 @@ export default function Submissions({ loaderData }: Route.ComponentProps) {
     </Box>
   );
 }
-

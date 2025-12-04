@@ -31,4 +31,3 @@ export function LoginFields({ formData, formErrors, loading, onChange }: LoginFi
     </Box>
   );
 }
-

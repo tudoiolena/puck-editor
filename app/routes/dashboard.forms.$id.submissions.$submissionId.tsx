@@ -28,27 +28,27 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({ request, params }: Route.LoaderArgs) {
-  const userId = getUserIdFromRequest(request);
-  
+  const userId = await getUserIdFromRequest(request);
+
   if (!userId) {
     return redirect(ROUTES.LOGIN);
   }
 
   const formId = parseInt(params.id || '');
   const submissionId = parseInt(params.submissionId || '');
-  
+
   if (isNaN(formId) || isNaN(submissionId)) {
     return redirect(ROUTES.DASHBOARD);
   }
 
   const form = await getForm(formId, userId);
-  
+
   if (!form) {
     return redirect(ROUTES.DASHBOARD);
   }
 
   const submission = await getSubmission(submissionId, formId, userId);
-  
+
   if (!submission) {
     return redirect(ROUTES.FORMS.SUBMISSIONS(formId));
   }
@@ -161,7 +161,7 @@ export default function SubmissionDetail({ loaderData }: Route.ComponentProps) {
           <Typography variant="h6" className="font-semibold text-gray-800 mb-4">
             Form Data
           </Typography>
-          
+
           {dataEntries.length === 0 ? (
             <Typography className="text-gray-500 text-center py-8">
               No form data available
@@ -171,8 +171,12 @@ export default function SubmissionDetail({ loaderData }: Route.ComponentProps) {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell><strong>Field</strong></TableCell>
-                    <TableCell><strong>Value</strong></TableCell>
+                    <TableCell>
+                      <strong>Field</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>Value</strong>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -208,4 +212,3 @@ export default function SubmissionDetail({ loaderData }: Route.ComponentProps) {
     </Box>
   );
 }
-

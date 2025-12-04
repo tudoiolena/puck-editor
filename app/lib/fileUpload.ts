@@ -9,9 +9,7 @@ const PROFILE_PICTURE_QUALITY = 85; // JPEG quality
  * Process and save profile picture as base64 string for database storage
  * Returns data URI format: "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
  */
-export async function saveProfilePicture(
-  file: File
-): Promise<string> {
+export async function saveProfilePicture(file: File): Promise<string> {
   // 1. Validate file type (MIME type)
   if (!ALLOWED_MIME_TYPES.includes(file.type)) {
     throw new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.');

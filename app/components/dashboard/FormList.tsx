@@ -35,4 +35,3 @@ export function FormList({ forms, onDelete, onCopy, onTogglePublish, isLoading }
     </Box>
   );
 }
-

@@ -1,19 +1,25 @@
 export const TextArea = {
   fields: {
-    name: { type: "text" as const, label: "Field Name" },
-    label: { type: "text" as const, label: "Label" },
-    placeholder: { type: "text" as const, label: "Placeholder" },
-    required: { type: "radio" as const, options: [{ label: "Required", value: true }, { label: "Optional", value: false }] },
-    rows: { type: "number" as const, label: "Rows" },
-    helperText: { type: "text" as const, label: "Helper Text" },
+    name: { type: 'text' as const, label: 'Field Name' },
+    label: { type: 'text' as const, label: 'Label' },
+    placeholder: { type: 'text' as const, label: 'Placeholder' },
+    required: {
+      type: 'radio' as const,
+      options: [
+        { label: 'Required', value: true },
+        { label: 'Optional', value: false },
+      ],
+    },
+    rows: { type: 'number' as const, label: 'Rows' },
+    helperText: { type: 'text' as const, label: 'Helper Text' },
   },
   defaultProps: {
-    name: "message",
-    label: "Message",
-    placeholder: "",
+    name: 'message',
+    label: 'Message',
+    placeholder: '',
     required: false,
     rows: 4,
-    helperText: "",
+    helperText: '',
   },
   render: (props) => {
     const { name, label, placeholder, required, rows, helperText } = props;
@@ -35,4 +41,3 @@ export const TextArea = {
     );
   },
 };
-

@@ -36,7 +36,7 @@ export default function ResetPassword() {
   const navigate = useNavigate();
   const actionData = useActionData<typeof action>();
   const token = searchParams.get('token');
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -96,10 +96,14 @@ export default function ResetPassword() {
 
   const getPasswordStrengthColor = () => {
     switch (passwordStrength.strength) {
-      case 'weak': return 'error';
-      case 'medium': return 'warning';
-      case 'strong': return 'success';
-      default: return 'primary';
+      case 'weak':
+        return 'error';
+      case 'medium':
+        return 'warning';
+      case 'strong':
+        return 'success';
+      default:
+        return 'primary';
     }
   };
 
@@ -198,22 +202,22 @@ export default function ResetPassword() {
               helperText={formErrors.password}
               slotProps={{
                 input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Lock className="text-gray-400" />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                      disabled={loading}
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock className="text-gray-400" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                        disabled={loading}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
                 },
               }}
               disabled={loading}
@@ -227,24 +231,26 @@ export default function ResetPassword() {
                   <Typography variant="caption" className="text-gray-600">
                     Password Strength:
                   </Typography>
-                  <Typography 
-                    variant="caption" 
+                  <Typography
+                    variant="caption"
                     className={`font-semibold ${
-                      passwordStrength.strength === 'weak' ? 'text-red-600' :
-                      passwordStrength.strength === 'medium' ? 'text-yellow-600' :
-                      'text-green-600'
+                      passwordStrength.strength === 'weak'
+                        ? 'text-red-600'
+                        : passwordStrength.strength === 'medium'
+                          ? 'text-yellow-600'
+                          : 'text-green-600'
                     }`}
                   >
                     {passwordStrength.strength.toUpperCase()}
                   </Typography>
                 </Box>
-                <LinearProgress 
-                  variant="determinate" 
+                <LinearProgress
+                  variant="determinate"
                   value={getPasswordStrengthValue()}
                   color={getPasswordStrengthColor()}
                   className="h-2 rounded"
                 />
-                
+
                 {!passwordValidation.isValid && (
                   <List dense className="mt-2">
                     {passwordValidation.errors.map((error, index) => (
@@ -252,7 +258,7 @@ export default function ResetPassword() {
                         <ListItemIcon className="min-w-0 mr-2">
                           <Cancel className="text-red-500" fontSize="small" />
                         </ListItemIcon>
-                        <ListItemText 
+                        <ListItemText
                           primary={error}
                           primaryTypographyProps={{ variant: 'caption', className: 'text-red-600' }}
                         />
@@ -274,22 +280,22 @@ export default function ResetPassword() {
               helperText={formErrors.confirmPassword}
               slotProps={{
                 input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Lock className="text-gray-400" />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      edge="end"
-                      disabled={loading}
-                    >
-                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock className="text-gray-400" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        edge="end"
+                        disabled={loading}
+                      >
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
                 },
               }}
               disabled={loading}
@@ -319,7 +325,10 @@ export default function ResetPassword() {
         <Box className="mt-6 text-center">
           <Typography variant="body2" className="text-gray-600">
             Remember your password?{' '}
-            <Link to="/login" className="text-blue-600 hover:text-blue-800 font-semibold no-underline">
+            <Link
+              to="/login"
+              className="text-blue-600 hover:text-blue-800 font-semibold no-underline"
+            >
               Sign in
             </Link>
           </Typography>
@@ -328,4 +337,3 @@ export default function ResetPassword() {
     </Box>
   );
 }
-

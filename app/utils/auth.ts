@@ -33,12 +33,14 @@ export const validateEmail = (email: string): boolean => {
 };
 
 // Password validation
-export const validatePassword = (password: string): {
+export const validatePassword = (
+  password: string
+): {
   isValid: boolean;
   errors: string[];
 } => {
   const errors: string[] = [];
-  
+
   if (password.length < 8) {
     errors.push('Password must be at least 8 characters long');
   }
@@ -54,7 +56,7 @@ export const validatePassword = (password: string): {
   if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
     errors.push('Password must contain at least one special character');
   }
-  
+
   return {
     isValid: errors.length === 0,
     errors,
@@ -62,19 +64,21 @@ export const validatePassword = (password: string): {
 };
 
 // Password strength indicator
-export const getPasswordStrength = (password: string): {
+export const getPasswordStrength = (
+  password: string
+): {
   strength: 'weak' | 'medium' | 'strong';
   score: number;
 } => {
   let score = 0;
-  
+
   if (password.length >= 8) score++;
   if (password.length >= 12) score++;
   if (/[A-Z]/.test(password)) score++;
   if (/[a-z]/.test(password)) score++;
   if (/[0-9]/.test(password)) score++;
   if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score++;
-  
+
   if (score <= 2) return { strength: 'weak', score };
   if (score <= 4) return { strength: 'medium', score };
   return { strength: 'strong', score };
@@ -82,7 +86,9 @@ export const getPasswordStrength = (password: string): {
 
 // API calls - these will be connected to your backend
 export const authAPI = {
-  login: async (data: LoginData): Promise<{ success: boolean; message: string; token?: string }> => {
+  login: async (
+    data: LoginData
+  ): Promise<{ success: boolean; message: string; token?: string }> => {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
@@ -91,7 +97,7 @@ export const authAPI = {
         },
         body: JSON.stringify(data),
       });
-      
+
       const result = await response.json();
       return result;
     } catch (error) {
@@ -114,7 +120,7 @@ export const authAPI = {
           lastName: data.lastName,
         }),
       });
-      
+
       const result = await response.json();
       return result;
     } catch (error) {
@@ -132,7 +138,7 @@ export const authAPI = {
         },
         body: JSON.stringify({ token }),
       });
-      
+
       const result = await response.json();
       return result;
     } catch (error) {
@@ -141,7 +147,9 @@ export const authAPI = {
     }
   },
 
-  forgotPassword: async (data: ForgotPasswordData): Promise<{ success: boolean; message: string }> => {
+  forgotPassword: async (
+    data: ForgotPasswordData
+  ): Promise<{ success: boolean; message: string }> => {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
         method: 'POST',
@@ -150,7 +158,7 @@ export const authAPI = {
         },
         body: JSON.stringify(data),
       });
-      
+
       const result = await response.json();
       return result;
     } catch (error) {
@@ -159,7 +167,9 @@ export const authAPI = {
     }
   },
 
-  resetPassword: async (data: ResetPasswordData): Promise<{ success: boolean; message: string }> => {
+  resetPassword: async (
+    data: ResetPasswordData
+  ): Promise<{ success: boolean; message: string }> => {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
         method: 'POST',
@@ -168,7 +178,7 @@ export const authAPI = {
         },
         body: JSON.stringify(data),
       });
-      
+
       const result = await response.json();
       return result;
     } catch (error) {
@@ -192,4 +202,3 @@ export const getAuthToken = (): string | null => {
 export const clearAuthToken = (): void => {
   localStorage.removeItem('authToken');
 };
-

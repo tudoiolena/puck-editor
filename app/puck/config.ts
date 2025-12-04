@@ -2,8 +2,8 @@
  * Puck configuration
  * Combines all components into a single config
  */
-import type { Config } from "@measured/puck";
-import type { UserConfig } from "./types/config";
+import type { Config } from '@measured/puck';
+import type { UserConfig } from './types/config';
 
 // Import layout components
 import {
@@ -15,7 +15,7 @@ import {
   Columns,
   Card,
   Flex,
-} from "./components/layout";
+} from './components/layout';
 
 // Import form components
 import {
@@ -27,7 +27,7 @@ import {
   CheckboxGroup,
   SubmitButton,
   FileUpload,
-} from "./components/form";
+} from './components/form';
 
 export const config = {
   components: {
@@ -53,5 +53,4 @@ export const config = {
 } satisfies Config<UserConfig>;
 
 // Re-export types for convenience
-export type { UserConfig } from "./types/config";
-
+export type { UserConfig } from './types/config';

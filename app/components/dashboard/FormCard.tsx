@@ -1,8 +1,29 @@
 import { useState } from 'react';
-import { Link, useFetcher } from 'react-router';
+import { Link } from 'react-router';
 import { ROUTES } from '../../constants/routes';
-import { Box, Button, Typography, Card, CardContent, CardActions, Chip, TextField, InputAdornment, IconButton, Snackbar, Alert } from '@mui/material';
-import { Edit, Delete, ContentCopy, Visibility, VisibilityOff, List, OpenInNew, Link as LinkIcon, Check } from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Typography,
+  Card,
+  CardContent,
+  CardActions,
+  Chip,
+  TextField,
+  InputAdornment,
+  IconButton,
+} from '@mui/material';
+import {
+  Edit,
+  Delete,
+  ContentCopy,
+  Visibility,
+  VisibilityOff,
+  List,
+  OpenInNew,
+  Link as LinkIcon,
+  Check,
+} from '@mui/icons-material';
 
 interface FormCardProps {
   form: {
@@ -21,8 +42,8 @@ interface FormCardProps {
 
 export function FormCard({ form, onDelete, onCopy, onTogglePublish, isLoading }: FormCardProps) {
   const [copied, setCopied] = useState(false);
-  const [showLink, setShowLink] = useState(false);
-  const publicUrl = typeof window !== 'undefined' ? `${window.location.origin}/f/${form.slug}` : `/f/${form.slug}`;
+  const publicUrl =
+    typeof window !== 'undefined' ? `${window.location.origin}/f/${form.slug}` : `/f/${form.slug}`;
 
   const handleCopyLink = async () => {
     try {
@@ -53,7 +74,7 @@ export function FormCard({ form, onDelete, onCopy, onTogglePublish, isLoading }:
             {form.description}
           </Typography>
         )}
-        
+
         {/* Public Link Display */}
         {form.isPublished && (
           <Box className="mb-3 p-3 bg-green-50 border border-green-200 rounded-lg">
@@ -117,10 +138,11 @@ export function FormCard({ form, onDelete, onCopy, onTogglePublish, isLoading }:
           )}
         </Box>
         <Typography variant="caption" className="text-gray-500">
-          Updated: {new Date(form.updatedAt).toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: '2-digit', 
-            day: '2-digit' 
+          Updated:{' '}
+          {new Date(form.updatedAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
           })}
         </Typography>
       </CardContent>
@@ -168,4 +190,3 @@ export function FormCard({ form, onDelete, onCopy, onTogglePublish, isLoading }:
     </Card>
   );
 }
-

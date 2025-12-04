@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLoaderData, Link } from 'react-router';
+import type { Route } from './+types/statistics';
 import {
   Box,
   Typography,
@@ -28,8 +29,20 @@ import {
   OpenInNew,
 } from '@mui/icons-material';
 import { DashboardAppBar } from '../components/dashboard/DashboardAppBar';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import type { Route } from './+types/statistics';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 import { ROUTES } from '../constants/routes';
 
 export function meta({ loaderData }: Route.MetaArgs) {
@@ -42,8 +55,39 @@ export function meta({ loaderData }: Route.MetaArgs) {
 export { loader } from '../loaders/statistics';
 
 export default function Statistics() {
-  const loaderData = useLoaderData() as typeof import('../loaders/statistics').loader;
-  
+  const loaderData = useLoaderData() as {
+    user: {
+      id: number;
+      email: string;
+      first_name: string;
+      last_name: string;
+      profile_picture: string | null;
+      email_verified: boolean;
+    };
+    statistics: {
+      totalForms: number;
+      publishedForms: number;
+      draftForms: number;
+      totalSubmissions: number;
+      recentActivity: {
+        last7Days: number;
+        last30Days: number;
+      };
+      formPerformance: Array<{
+        id: number;
+        title: string;
+        slug: string;
+        isPublished: boolean;
+        submissionCount: number;
+        lastSubmission: Date | null;
+      }>;
+      dailySubmissions: Array<{
+        date: string;
+        count: number;
+      }>;
+    };
+  };
+
   const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
 
   // Chart colors
@@ -52,7 +96,7 @@ export default function Statistics() {
   // Handle CSV export
   const handleCSVExport = () => {
     const { statistics } = loaderData;
-    
+
     // Create CSV content
     const csvContent = [
       ['Metric', 'Value'],
@@ -65,7 +109,7 @@ export default function Statistics() {
       [''],
       ['Form Performance'],
       ['Form Title', 'Published', 'Submissions', 'Last Submission'],
-      ...statistics.formPerformance.map(form => [
+      ...statistics.formPerformance.map((form) => [
         form.title,
         form.isPublished ? 'Yes' : 'No',
         form.submissionCount,
@@ -73,8 +117,8 @@ export default function Statistics() {
       ]),
     ];
 
-    const csvString = csvContent.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-    
+    const csvString = csvContent.map((row) => row.map((cell) => `"${cell}"`).join(',')).join('\n');
+
     // Download CSV
     const blob = new Blob([csvString], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
@@ -131,7 +175,7 @@ export default function Statistics() {
 
         {/* Overview Cards */}
         <Grid container spacing={4} className="mb-8">
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card className="h-full">
               <CardContent className="text-center">
                 <Assessment className="text-blue-600 text-4xl mb-2" />
@@ -144,8 +188,8 @@ export default function Statistics() {
               </CardContent>
             </Card>
           </Grid>
-          
-          <Grid item xs={12} sm={6} md={3}>
+
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card className="h-full">
               <CardContent className="text-center">
                 <Visibility className="text-green-600 text-4xl mb-2" />
@@ -158,8 +202,8 @@ export default function Statistics() {
               </CardContent>
             </Card>
           </Grid>
-          
-          <Grid item xs={12} sm={6} md={3}>
+
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card className="h-full">
               <CardContent className="text-center">
                 <TrendingUp className="text-purple-600 text-4xl mb-2" />
@@ -172,8 +216,8 @@ export default function Statistics() {
               </CardContent>
             </Card>
           </Grid>
-          
-          <Grid item xs={12} sm={6} md={3}>
+
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card className="h-full">
               <CardContent className="text-center">
                 <TrendingDown className="text-orange-600 text-4xl mb-2" />
@@ -191,62 +235,71 @@ export default function Statistics() {
         {/* Charts Section */}
         <Grid container spacing={4} className="mb-8">
           {/* Submissions Over Time */}
-          <Grid item xs={12} lg={8}>
-            <Paper className="p-6">
+          <Grid size={{ xs: 12, lg: 8 }}>
+            <Paper className="p-6" sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <Typography variant="h6" className="font-semibold text-gray-800 mb-4">
                 Submissions Over Time (Last 30 Days)
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={statistics.dailySubmissions}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  />
-                  <YAxis />
-                  <RechartsTooltip 
-                    labelFormatter={(value) => new Date(value).toLocaleDateString()}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="count" 
-                    stroke="#3B82F6" 
-                    strokeWidth={2}
-                    dot={{ fill: '#3B82F6' }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <Box sx={{ flex: 1, minHeight: 0 }}>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={statistics.dailySubmissions}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(value) =>
+                        new Date(value).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                        })
+                      }
+                    />
+                    <YAxis />
+                    <RechartsTooltip
+                      labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="count"
+                      stroke="#3B82F6"
+                      strokeWidth={2}
+                      dot={{ fill: '#3B82F6' }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </Box>
             </Paper>
           </Grid>
 
           {/* Form Performance Pie Chart */}
-          <Grid item xs={12} lg={4}>
-            <Paper className="p-6">
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <Paper className="p-6" sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <Typography variant="h6" className="font-semibold text-gray-800 mb-4">
                 Form Status Distribution
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={[
-                      { name: 'Published', value: statistics.publishedForms, color: '#10B981' },
-                      { name: 'Draft', value: statistics.draftForms, color: '#F59E0B' },
-                    ]}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    dataKey="value"
-                  >
-                    {[
-                      { name: 'Published', value: statistics.publishedForms, color: '#10B981' },
-                      { name: 'Draft', value: statistics.draftForms, color: '#F59E0B' },
-                    ].map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <RechartsTooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              <Box sx={{ flex: 1, minHeight: 0 }}>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Published', value: statistics.publishedForms, color: '#10B981' },
+                        { name: 'Draft', value: statistics.draftForms, color: '#F59E0B' },
+                      ]}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      dataKey="value"
+                    >
+                      {[
+                        { name: 'Published', value: statistics.publishedForms, color: '#10B981' },
+                        { name: 'Draft', value: statistics.draftForms, color: '#F59E0B' },
+                      ].map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <RechartsTooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Box>
               <Box className="mt-4 flex justify-center gap-4">
                 <Box className="flex items-center gap-2">
                   <Box className="w-3 h-3 bg-green-500 rounded"></Box>
@@ -300,10 +353,9 @@ export default function Statistics() {
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2" className="text-gray-600">
-                        {form.lastSubmission 
+                        {form.lastSubmission
                           ? new Date(form.lastSubmission).toLocaleDateString()
-                          : 'Never'
-                        }
+                          : 'Never'}
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
@@ -342,4 +394,3 @@ export default function Statistics() {
     </Box>
   );
 }
-

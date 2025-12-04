@@ -4,7 +4,7 @@ import type { Route } from './+types/uploads.$filename';
 
 export async function loader({ params }: Route.LoaderArgs) {
   const { filename } = params;
-  
+
   try {
     // Try profile pictures (new location), old profile pictures, and form uploads directories
     const profilesPath = path.join(process.cwd(), 'public', 'uploads', 'profiles', filename);
@@ -36,18 +36,18 @@ export async function loader({ params }: Route.LoaderArgs) {
         }
       }
     }
-    
+
     if (!fileExists) {
       return new Response('File not found', { status: 404 });
     }
-    
+
     // Read the file
     const fileBuffer = await fs.readFile(filePath);
-    
+
     // Determine content type based on file extension
     const ext = path.extname(filename).toLowerCase();
     let contentType = 'application/octet-stream';
-    
+
     switch (ext) {
       case '.jpg':
       case '.jpeg':
@@ -75,13 +75,13 @@ export async function loader({ params }: Route.LoaderArgs) {
         contentType = 'text/plain';
         break;
     }
-    
+
     return new Response(new Uint8Array(fileBuffer), {
       headers: {
         'Content-Type': contentType,
         'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
+        Pragma: 'no-cache',
+        Expires: '0',
       },
     });
   } catch (error) {

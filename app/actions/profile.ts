@@ -2,12 +2,12 @@ import { updateProfileSchema, changePasswordSchema } from '../lib/validation';
 import { getUserIdFromRequest, verifyPassword, hashPassword } from '../lib/auth';
 import { prisma } from '../lib/db.server';
 import { redirect } from 'react-router';
-import { saveProfilePicture, deleteProfilePicture } from '../lib/fileUpload';
+import { saveProfilePicture } from '../lib/fileUpload';
 import { ROUTES } from '../constants/routes';
 
 export async function action({ request }: { request: Request }) {
-  const userId = getUserIdFromRequest(request);
-  
+  const userId = await getUserIdFromRequest(request);
+
   if (!userId) {
     return redirect(ROUTES.LOGIN);
   }
@@ -80,8 +80,11 @@ async function handleChangePassword(userId: number, formData: FormData) {
   }
 
   // Verify current password
-  const currentPasswordValid = await verifyPassword(validatedData.currentPassword, user.password_hash);
-  
+  const currentPasswordValid = await verifyPassword(
+    validatedData.currentPassword,
+    user.password_hash
+  );
+
   if (!currentPasswordValid) {
     return { error: 'Current password is incorrect' };
   }
@@ -108,7 +111,7 @@ async function handleUploadProfilePicture(userId: number, formData: FormData) {
     return { error: 'No file uploaded' };
   }
 
-  // Get current user and their existing profile picture
+  // Get current user
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { profile_picture: true },
@@ -117,8 +120,6 @@ async function handleUploadProfilePicture(userId: number, formData: FormData) {
   if (!user) {
     return { error: 'User not found' };
   }
-
-  const oldProfilePicture = user.profile_picture;
 
   try {
     // Process and convert image to base64 (validation happens inside saveProfilePicture)
@@ -135,10 +136,12 @@ async function handleUploadProfilePicture(userId: number, formData: FormData) {
     // No file deletion needed - old image is automatically replaced in database
     console.log('Profile picture uploaded successfully (stored in database)');
     return redirect(`${ROUTES.PROFILE}?updated=true`);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error uploading profile picture:', error);
+    const errorMessage =
+      error instanceof Error ? error.message : 'Failed to upload profile picture. Please try again.';
     return {
-      error: error.message || 'Failed to upload profile picture. Please try again.',
+      error: errorMessage,
     };
   }
 }

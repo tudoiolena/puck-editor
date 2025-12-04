@@ -17,8 +17,8 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const userId = getUserIdFromRequest(request);
-  
+  const userId = await getUserIdFromRequest(request);
+
   if (!userId) {
     return redirect(ROUTES.LOGIN);
   }
@@ -27,8 +27,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const userId = getUserIdFromRequest(request);
-  
+  const userId = await getUserIdFromRequest(request);
+
   if (!userId) {
     return redirect(ROUTES.LOGIN);
   }
@@ -116,9 +116,7 @@ export default function NewForm({ loaderData }: Route.ComponentProps) {
               {/* Error Message */}
               {actionData?.error && (
                 <Box className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <Typography className="text-red-800 text-sm">
-                    {actionData.error}
-                  </Typography>
+                  <Typography className="text-red-800 text-sm">{actionData.error}</Typography>
                 </Box>
               )}
 
@@ -188,4 +186,3 @@ export default function NewForm({ loaderData }: Route.ComponentProps) {
     </Box>
   );
 }
-

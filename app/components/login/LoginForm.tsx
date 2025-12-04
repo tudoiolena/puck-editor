@@ -1,15 +1,19 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, Form, useActionData } from 'react-router';
-import { Box, Button, Paper, Alert, CircularProgress, Typography } from '@mui/material';
+import { Box, Button, Paper, Alert, Typography } from '@mui/material';
 import { LoginHeader } from './LoginHeader';
 import { LoginFields } from './LoginFields';
-import { validateLoginForm, hasErrors, type LoginFormData, type LoginFormErrors } from './loginValidation';
+import {
+  validateLoginForm,
+  hasErrors,
+  type LoginFormData,
+  type LoginFormErrors,
+} from './loginValidation';
 import { ROUTES } from '../../constants/routes';
 
 export function LoginForm() {
-  const navigate = useNavigate();
   const actionData = useActionData() as { error?: string } | undefined;
-  
+
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: '',
@@ -28,7 +32,7 @@ export function LoginForm() {
   const handleSubmit = (event: FormEvent) => {
     const errors = validateLoginForm(formData);
     setFormErrors(errors);
-    
+
     if (hasErrors(errors)) {
       event.preventDefault();
     }
@@ -50,7 +54,7 @@ export function LoginForm() {
             {/* Hidden fields to send form data to the action */}
             <input type="hidden" name="email" value={formData.email} />
             <input type="hidden" name="password" value={formData.password} />
-            
+
             <LoginFields
               formData={formData}
               formErrors={formErrors}
@@ -59,7 +63,10 @@ export function LoginForm() {
             />
 
             <Box className="flex justify-end mt-4">
-              <Link to={ROUTES.FORGOT_PASSWORD} className="text-sm text-blue-600 hover:text-blue-800 no-underline">
+              <Link
+                to={ROUTES.FORGOT_PASSWORD}
+                className="text-sm text-blue-600 hover:text-blue-800 no-underline"
+              >
                 Forgot password?
               </Link>
             </Box>
@@ -79,7 +86,10 @@ export function LoginForm() {
         <Box className="mt-6 text-center">
           <Typography variant="body2" className="text-gray-600">
             Don't have an account?{' '}
-            <Link to={ROUTES.REGISTER} className="text-blue-600 hover:text-blue-800 font-semibold no-underline">
+            <Link
+              to={ROUTES.REGISTER}
+              className="text-blue-600 hover:text-blue-800 font-semibold no-underline"
+            >
               Sign up
             </Link>
           </Typography>

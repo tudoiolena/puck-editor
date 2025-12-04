@@ -1,6 +1,15 @@
 import { useState } from 'react';
 import { Form, redirect, useActionData, useNavigation } from 'react-router';
-import { Box, Typography, Paper, CircularProgress, Alert, TextField, Button, InputAdornment } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Paper,
+  CircularProgress,
+  Alert,
+  TextField,
+  Button,
+  InputAdornment,
+} from '@mui/material';
 import { Email } from '@mui/icons-material';
 import type { Route } from './+types/f.$slug';
 import { PuckRender } from '../components/puck/PuckRender';
@@ -18,7 +27,7 @@ export function meta({ loaderData }: Route.MetaArgs) {
       { name: 'description', content: 'The requested form could not be found' },
     ];
   }
-  
+
   return [
     { title: `${loaderData.form.title} - Form` },
     { name: 'description', content: loaderData.form.description || 'Fill out this form' },
@@ -27,21 +36,21 @@ export function meta({ loaderData }: Route.MetaArgs) {
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const slug = params.slug;
-  
+
   if (!slug) {
     return { form: null, error: 'Invalid form URL', userEmail: null };
   }
 
   const form = await getFormBySlug(slug);
-  
+
   if (!form) {
     return { form: null, error: 'Form not found or is not published', userEmail: null };
   }
 
   // Check if user is authenticated
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   let userEmail: string | null = null;
-  
+
   if (userId) {
     // Get authenticated user's email
     const user = await prisma.user.findUnique({
@@ -51,13 +60,13 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     userEmail = user?.email || null;
   }
 
-  return { 
+  return {
     form: {
-    id: form.id,
-    title: form.title,
-    description: form.description,
-    puckContent: form.puckContent,
-    settings: form.settings,
+      id: form.id,
+      title: form.title,
+      description: form.description,
+      puckContent: form.puckContent,
+      settings: form.settings,
     },
     userEmail,
   };
@@ -65,21 +74,21 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 export async function action({ request, params }: Route.ActionArgs) {
   const slug = params.slug;
-  
+
   if (!slug) {
     return { error: 'Invalid form URL' };
   }
 
   const form = await getFormBySlug(slug);
-  
+
   if (!form) {
     return { error: 'Form not found' };
   }
 
   // Check if user is authenticated
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   let authenticatedEmail: string | null = null;
-  
+
   if (userId) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -89,11 +98,11 @@ export async function action({ request, params }: Route.ActionArgs) {
   }
 
   const formData = await request.formData();
-  
+
   // Extract all form fields
   const submissionData: Record<string, any> = {};
   const uploadedFiles: Record<string, string> = {};
-  
+
   for (const [key, value] of formData.entries()) {
     // Handle file uploads
     if (value instanceof File && value.size > 0) {
@@ -101,21 +110,21 @@ export async function action({ request, params }: Route.ActionArgs) {
       try {
         const fileName = `form_${form.id}_${Date.now()}_${value.name}`;
         const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'forms');
-        
+
         // Create directory if it doesn't exist
         await fs.mkdir(uploadDir, { recursive: true });
-        
+
         // Save file
         const filePath = path.join(uploadDir, fileName);
         const bytes = await value.arrayBuffer();
         const buffer = Buffer.from(bytes);
-        
+
         await fs.writeFile(filePath, buffer);
-        
+
         // Store file path in submission data
         uploadedFiles[key] = `/uploads/forms/${fileName}`;
         submissionData[key] = `/uploads/forms/${fileName}`;
-        
+
         console.log(`File uploaded: ${key} -> ${uploadedFiles[key]}`);
       } catch (error) {
         console.error(`Error uploading file ${key}:`, error);
@@ -137,20 +146,21 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   // Use authenticated user's email if available, otherwise use email from form data
   const email = authenticatedEmail || (submissionData.email as string);
-  
+
   if (!email || !email.includes('@')) {
     return { error: 'Please provide a valid email address' };
   }
 
   try {
     // Get IP address from request
-    const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
-                     request.headers.get('x-real-ip') || 
-                     undefined;
+    const ipAddress =
+      request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+      request.headers.get('x-real-ip') ||
+      undefined;
 
     // Submit the form
     await submitForm(form.id, email || 'anonymous@example.com', submissionData, ipAddress);
-    
+
     // Redirect to thank you page
     return redirect(`/f/${slug}/thank-you`);
   } catch (error) {
@@ -166,7 +176,7 @@ export default function PublicForm({ loaderData }: Route.ComponentProps) {
   const [userEmail, setUserEmail] = useState(loaderData.userEmail || '');
   const [emailError, setEmailError] = useState('');
   const [emailValidated, setEmailValidated] = useState(!!loaderData.userEmail); // True if authenticated user
-  
+
   // Use authenticated user's email if available
   const authenticatedEmail = loaderData.userEmail || '';
 
@@ -211,7 +221,7 @@ export default function PublicForm({ loaderData }: Route.ComponentProps) {
   // Skip if user is authenticated (they already have an email)
   const requireEmail = loaderData.form.settings?.requireEmail !== false; // Default to true
   const isAuthenticated = !!authenticatedEmail;
-  
+
   // Only show email collection if email is required AND user is not authenticated AND email not validated
   if (requireEmail && !emailValidated && !isAuthenticated) {
     return (
@@ -225,7 +235,7 @@ export default function PublicForm({ loaderData }: Route.ComponentProps) {
               {loaderData.form.description}
             </Typography>
           )}
-          
+
           <Typography variant="h6" className="font-semibold text-gray-700 mb-2">
             Enter Your Email
           </Typography>
@@ -311,13 +321,11 @@ export default function PublicForm({ loaderData }: Route.ComponentProps) {
         <Paper className="p-8">
           <Form method="post" encType="multipart/form-data">
             {/* Hidden email field - always include if we have an email */}
-            {submissionEmail && (
-              <input type="hidden" name="email" value={submissionEmail} />
-            )}
-            
+            {submissionEmail && <input type="hidden" name="email" value={submissionEmail} />}
+
             {/* Render the form content from Puck */}
             <PuckRender data={loaderData.form.puckContent} />
-            
+
             {/* Loading overlay */}
             {isSubmitting && (
               <Box className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -340,4 +348,3 @@ export default function PublicForm({ loaderData }: Route.ComponentProps) {
     </Box>
   );
 }
-

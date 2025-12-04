@@ -19,7 +19,7 @@ export async function action({ request }: { request: Request }) {
     console.log('Verifying token...');
     const decoded = verifyVerificationToken(token);
     console.log('Token decoded:', decoded);
-    
+
     if (!decoded) {
       console.log('Token verification failed');
       return {
@@ -59,9 +59,16 @@ export async function action({ request }: { request: Request }) {
     console.log('Token matches:', user.verification_token === token);
     console.log('Expires at:', user.verification_expires_at);
     console.log('Current time:', new Date());
-    console.log('Token expired:', user.verification_expires_at && user.verification_expires_at < new Date());
-    
-    if (user.verification_token !== token || !user.verification_expires_at || user.verification_expires_at < new Date()) {
+    console.log(
+      'Token expired:',
+      user.verification_expires_at && user.verification_expires_at < new Date()
+    );
+
+    if (
+      user.verification_token !== token ||
+      !user.verification_expires_at ||
+      user.verification_expires_at < new Date()
+    ) {
       console.log('Token validation failed');
       return {
         success: false,

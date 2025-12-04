@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Box, Paper, Typography, Alert, CircularProgress, Button } from '@mui/material';
 import { CheckCircle, Error } from '@mui/icons-material';
 import { useSearchParams, Link, useFetcher } from 'react-router';
@@ -12,51 +12,32 @@ interface VerificationResult {
 export function VerifyEmailHandler() {
   const [searchParams] = useSearchParams();
   const [result, setResult] = useState<VerificationResult | null>(null);
-  const [loading, setLoading] = useState(true);
   const fetcher = useFetcher();
   const token = searchParams.get('token');
+  const hasSubmittedRef = useRef(false);
 
+  // Trigger verification on mount if token exists
   useEffect(() => {
-    if (token) {
-      verifyEmail(token);
-    } else {
-      setLoading(false);
+    if (token && !hasSubmittedRef.current && fetcher.state === 'idle' && !fetcher.data) {
+      hasSubmittedRef.current = true;
+      const formData = new FormData();
+      formData.append('token', token);
+
+      fetcher.submit(formData, {
+        method: 'POST',
+        action: '/verify-email',
+      });
     }
   }, [token]);
 
+  // Handle fetcher state changes
   useEffect(() => {
-    if (fetcher.data) {
-      setResult(fetcher.data);
-      setLoading(false);
+    if (fetcher.state === 'idle' && fetcher.data) {
+      setResult(fetcher.data as VerificationResult);
     }
-  }, [fetcher.data]);
+  }, [fetcher.state, fetcher.data]);
 
-  const verifyEmail = (token: string) => {
-    const formData = new FormData();
-    formData.append('token', token);
-    
-    fetcher.submit(formData, {
-      method: 'POST',
-      action: '/verify-email',
-    });
-  };
-
-  if (loading) {
-    return (
-      <Box className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        <Paper elevation={3} className="w-full max-w-md p-8 rounded-xl text-center">
-          <CircularProgress className="mb-4" />
-          <Typography variant="h4" component="h1" className="font-bold text-gray-800 mb-2">
-            Verifying Email
-          </Typography>
-          <Typography variant="body1" className="text-gray-600">
-            Please wait while we verify your email address...
-          </Typography>
-        </Paper>
-      </Box>
-    );
-  }
-
+  // Show error if no token
   if (!token) {
     return (
       <Box className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -81,6 +62,23 @@ export function VerifyEmailHandler() {
     );
   }
 
+  // Show loading while submitting or if no result yet
+  if (fetcher.state === 'submitting' || fetcher.state === 'loading' || !result) {
+    return (
+      <Box className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <Paper elevation={3} className="w-full max-w-md p-8 rounded-xl text-center">
+          <CircularProgress className="mb-4" />
+          <Typography variant="h4" component="h1" className="font-bold text-gray-800 mb-2">
+            Verifying Email
+          </Typography>
+          <Typography variant="body1" className="text-gray-600">
+            Please wait while we verify your email address...
+          </Typography>
+        </Paper>
+      </Box>
+    );
+  }
+  
   return (
     <Box className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <Paper elevation={3} className="w-full max-w-md p-8 rounded-xl text-center">

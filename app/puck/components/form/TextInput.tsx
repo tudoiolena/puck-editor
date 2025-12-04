@@ -1,17 +1,23 @@
 export const TextInput = {
   fields: {
-    name: { type: "text" as const, label: "Field Name" },
-    label: { type: "text" as const, label: "Label" },
-    placeholder: { type: "text" as const, label: "Placeholder" },
-    required: { type: "radio" as const, options: [{ label: "Required", value: true }, { label: "Optional", value: false }] },
-    helperText: { type: "text" as const, label: "Helper Text" },
+    name: { type: 'text' as const, label: 'Field Name' },
+    label: { type: 'text' as const, label: 'Label' },
+    placeholder: { type: 'text' as const, label: 'Placeholder' },
+    required: {
+      type: 'radio' as const,
+      options: [
+        { label: 'Required', value: true },
+        { label: 'Optional', value: false },
+      ],
+    },
+    helperText: { type: 'text' as const, label: 'Helper Text' },
   },
   defaultProps: {
-    name: "field",
-    label: "Text Field",
-    placeholder: "",
+    name: 'field',
+    label: 'Text Field',
+    placeholder: '',
     required: false,
-    helperText: "",
+    helperText: '',
   },
   render: (props) => {
     const { name, label, placeholder, required, helperText } = props;
@@ -33,4 +39,3 @@ export const TextInput = {
     );
   },
 };
-

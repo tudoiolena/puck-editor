@@ -18,8 +18,14 @@ export { loader } from '../loaders/dashboard';
 export { action } from '../actions/dashboard';
 
 export default function Dashboard() {
-  const loaderData = useLoaderData() as { 
-    user: { id: number; email: string; first_name: string; last_name: string; email_verified: boolean };
+  const loaderData = useLoaderData() as {
+    user: {
+      id: number;
+      email: string;
+      first_name: string;
+      last_name: string;
+      email_verified: boolean;
+    };
     forms: Array<{
       id: number;
       title: string;
@@ -30,9 +36,13 @@ export default function Dashboard() {
       updatedAt: Date;
     }>;
   };
-  
+
   const fetcher = useFetcher();
-  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
     open: false,
     message: '',
     severity: 'success',
@@ -58,27 +68,23 @@ export default function Dashboard() {
   }
 
   const handleDelete = (formId: number) => {
-    if (window.confirm('Are you sure you want to delete this form? This action cannot be undone.')) {
-      fetcher.submit(
-        { action: 'delete', formId: formId.toString() },
-        { method: 'POST' }
-      );
+    if (
+      window.confirm('Are you sure you want to delete this form? This action cannot be undone.')
+    ) {
+      fetcher.submit({ action: 'delete', formId: formId.toString() }, { method: 'POST' });
     }
   };
 
   const handleCopy = (formId: number) => {
-    fetcher.submit(
-      { action: 'copy', formId: formId.toString() },
-      { method: 'POST' }
-    );
+    fetcher.submit({ action: 'copy', formId: formId.toString() }, { method: 'POST' });
   };
 
   const handleTogglePublish = (formId: number, currentStatus: boolean) => {
     fetcher.submit(
-      { 
-        action: 'publish', 
+      {
+        action: 'publish',
         formId: formId.toString(),
-        isPublished: (!currentStatus).toString()
+        isPublished: (!currentStatus).toString(),
       },
       { method: 'POST' }
     );
@@ -121,4 +127,3 @@ export default function Dashboard() {
     </Box>
   );
 }
-

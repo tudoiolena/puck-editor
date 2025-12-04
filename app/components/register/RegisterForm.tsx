@@ -8,13 +8,18 @@ import { PasswordField } from './PasswordField';
 import { ConfirmPasswordField } from './ConfirmPasswordField';
 import { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
 import { RegistrationSuccess } from './RegistrationSuccess';
-import { validateRegisterForm, hasErrors, type RegisterFormData, type RegisterFormErrors } from './registerValidation';
+import {
+  validateRegisterForm,
+  hasErrors,
+  type RegisterFormData,
+  type RegisterFormErrors,
+} from './registerValidation';
 import { ROUTES } from '../../constants/routes';
 
 export function RegisterForm() {
   const [searchParams] = useSearchParams();
   const actionData = useActionData() as { error?: string } | undefined;
-  
+
   const [formData, setFormData] = useState<RegisterFormData>({
     firstName: '',
     lastName: '',
@@ -42,7 +47,7 @@ export function RegisterForm() {
   const handleSubmit = (event: FormEvent) => {
     const errors = validateRegisterForm(formData);
     setFormErrors(errors);
-    
+
     if (hasErrors(errors)) {
       event.preventDefault();
     }
@@ -99,9 +104,7 @@ export function RegisterForm() {
               />
             </Box>
 
-            {formData.password && (
-              <PasswordStrengthIndicator password={formData.password} />
-            )}
+            {formData.password && <PasswordStrengthIndicator password={formData.password} />}
 
             <Box className="mt-4">
               <ConfirmPasswordField
@@ -129,7 +132,10 @@ export function RegisterForm() {
         <Box className="mt-6 text-center">
           <Typography variant="body2" className="text-gray-600">
             Already have an account?{' '}
-            <Link to={ROUTES.LOGIN} className="text-purple-600 hover:text-purple-800 font-semibold no-underline">
+            <Link
+              to={ROUTES.LOGIN}
+              className="text-purple-600 hover:text-purple-800 font-semibold no-underline"
+            >
               Sign in
             </Link>
           </Typography>

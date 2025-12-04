@@ -31,4 +31,3 @@ export function EmailField({ value, error, loading, onChange }: EmailFieldProps)
     />
   );
 }
-

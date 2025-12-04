@@ -29,7 +29,7 @@ export async function action({ request }: { request: Request }) {
     console.log('Verifying reset token...');
     const decoded = verifyPasswordResetToken(validatedData.token);
     console.log('Token decoded:', decoded);
-    
+
     if (!decoded) {
       console.log('Token verification failed');
       return {
@@ -60,9 +60,16 @@ export async function action({ request }: { request: Request }) {
     console.log('Token matches:', user.password_reset_token === validatedData.token);
     console.log('Expires at:', user.password_reset_expires_at);
     console.log('Current time:', new Date());
-    console.log('Token expired:', user.password_reset_expires_at && user.password_reset_expires_at < new Date());
-    
-    if (user.password_reset_token !== validatedData.token || !user.password_reset_expires_at || user.password_reset_expires_at < new Date()) {
+    console.log(
+      'Token expired:',
+      user.password_reset_expires_at && user.password_reset_expires_at < new Date()
+    );
+
+    if (
+      user.password_reset_token !== validatedData.token ||
+      !user.password_reset_expires_at ||
+      user.password_reset_expires_at < new Date()
+    ) {
       console.log('Invalid or expired token');
       return {
         success: false,
@@ -93,7 +100,7 @@ export async function action({ request }: { request: Request }) {
     };
   } catch (error) {
     console.error('Reset password error:', error);
-    
+
     if (error instanceof Error && error.name === 'ZodError') {
       return {
         success: false,

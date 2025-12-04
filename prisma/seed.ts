@@ -18,106 +18,108 @@ const prisma = new PrismaClient({ adapter });
 const defaultFormContent = {
   content: [
     {
-      type: "Hero",
+      type: 'Hero',
       props: {
-        id: "hero-1",
-        title: "Welcome to Your Dashboard",
-        description: "Build beautiful pages with our visual editor. Drag and drop components, customize everything, and publish instantly.",
-        align: "center",
-        padding: "80px",
+        id: 'hero-1',
+        title: 'Welcome to Your Dashboard',
+        description:
+          'Build beautiful pages with our visual editor. Drag and drop components, customize everything, and publish instantly.',
+        align: 'center',
+        padding: '80px',
       },
     },
     {
-      type: "VerticalSpace",
+      type: 'VerticalSpace',
       props: {
-        id: "space-1",
-        size: "64px",
+        id: 'space-1',
+        size: '64px',
       },
     },
     {
-      type: "Heading",
+      type: 'Heading',
       props: {
-        id: "heading-1",
-        text: "Key Features",
-        size: "3xl",
-        align: "center",
+        id: 'heading-1',
+        text: 'Key Features',
+        size: '3xl',
+        align: 'center',
       },
     },
     {
-      type: "VerticalSpace",
+      type: 'VerticalSpace',
       props: {
-        id: "space-2",
-        size: "32px",
+        id: 'space-2',
+        size: '32px',
       },
     },
     {
-      type: "Flex",
+      type: 'Flex',
       props: {
-        id: "flex-1",
+        id: 'flex-1',
         items: [
           {
-            title: "🎨 Visual Editor",
-            description: "Intuitive drag-and-drop interface for building pages",
+            title: '🎨 Visual Editor',
+            description: 'Intuitive drag-and-drop interface for building pages',
           },
           {
-            title: "⚡ Fast & Modern",
-            description: "Built with the latest web technologies for optimal performance",
+            title: '⚡ Fast & Modern',
+            description: 'Built with the latest web technologies for optimal performance',
           },
           {
-            title: "🔧 Customizable",
-            description: "Every component can be tailored to your exact needs",
+            title: '🔧 Customizable',
+            description: 'Every component can be tailored to your exact needs',
           },
         ],
         minItemWidth: 280,
       },
     },
     {
-      type: "VerticalSpace",
+      type: 'VerticalSpace',
       props: {
-        id: "space-3",
-        size: "64px",
+        id: 'space-3',
+        size: '64px',
       },
     },
     {
-      type: "Card",
+      type: 'Card',
       props: {
-        id: "card-1",
-        title: "Get Started Today",
-        description: "Click the 'Edit Page' button above to start customizing this dashboard with our visual editor.",
-        icon: "🚀",
-        mode: "card",
+        id: 'card-1',
+        title: 'Get Started Today',
+        description:
+          "Click the 'Edit Page' button above to start customizing this dashboard with our visual editor.",
+        icon: '🚀',
+        mode: 'card',
       },
     },
     {
-      type: "VerticalSpace",
+      type: 'VerticalSpace',
       props: {
-        id: "space-4",
-        size: "32px",
+        id: 'space-4',
+        size: '32px',
       },
     },
     {
-      type: "ButtonGroup",
+      type: 'ButtonGroup',
       props: {
-        id: "buttons-1",
+        id: 'buttons-1',
         buttons: [
           {
-            label: "View Documentation",
-            href: "#docs",
-            variant: "primary",
+            label: 'View Documentation',
+            href: '#docs',
+            variant: 'primary',
           },
           {
-            label: "Browse Components",
-            href: "#components",
-            variant: "secondary",
+            label: 'Browse Components',
+            href: '#components',
+            variant: 'secondary',
           },
         ],
-        align: "center",
+        align: 'center',
       },
     },
   ],
   root: {
     props: {
-      title: "Dashboard",
+      title: 'Dashboard',
     },
   },
 };
@@ -175,4 +177,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

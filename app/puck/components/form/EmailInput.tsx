@@ -1,20 +1,26 @@
-import type { ComponentConfig } from "@measured/puck";
-import type { UserConfig } from "../../types/config";
+import type { ComponentConfig } from '@measured/puck';
+import type { UserConfig } from '../../types/config';
 
-export const EmailInput: ComponentConfig<UserConfig["EmailInput"]> = {
+export const EmailInput: ComponentConfig<UserConfig['EmailInput']> = {
   fields: {
-    name: { type: "text" as const, label: "Field Name" },
-    label: { type: "text" as const, label: "Label" },
-    placeholder: { type: "text" as const, label: "Placeholder" },
-    required: { type: "radio" as const, options: [{ label: "Required", value: true }, { label: "Optional", value: false }] },
-    helperText: { type: "text" as const, label: "Helper Text" },
+    name: { type: 'text' as const, label: 'Field Name' },
+    label: { type: 'text' as const, label: 'Label' },
+    placeholder: { type: 'text' as const, label: 'Placeholder' },
+    required: {
+      type: 'radio' as const,
+      options: [
+        { label: 'Required', value: true },
+        { label: 'Optional', value: false },
+      ],
+    },
+    helperText: { type: 'text' as const, label: 'Helper Text' },
   },
   defaultProps: {
-    name: "email",
-    label: "Email Address",
-    placeholder: "your@email.com",
+    name: 'email',
+    label: 'Email Address',
+    placeholder: 'your@email.com',
     required: true,
-    helperText: "",
+    helperText: '',
   },
   render: (props) => {
     const { name, label, placeholder, required, helperText } = props;
@@ -36,4 +42,3 @@ export const EmailInput: ComponentConfig<UserConfig["EmailInput"]> = {
     );
   },
 };
-

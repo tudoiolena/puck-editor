@@ -1,28 +1,25 @@
 export const Columns = {
   fields: {
     columns: {
-      type: "array" as const,
+      type: 'array' as const,
       arrayFields: {
-        content: { type: "textarea" as const },
+        content: { type: 'textarea' as const },
       },
       defaultItemProps: {
-        content: "Column content",
+        content: 'Column content',
       },
     },
     distribution: {
-      type: "radio" as const,
+      type: 'radio' as const,
       options: [
-        { label: "Auto", value: "auto" },
-        { label: "Manual", value: "manual" },
+        { label: 'Auto', value: 'auto' },
+        { label: 'Manual', value: 'manual' },
       ],
     },
   },
   defaultProps: {
-    columns: [
-      { content: "Column 1" },
-      { content: "Column 2" },
-    ],
-    distribution: "auto" as const,
+    columns: [{ content: 'Column 1' }, { content: 'Column 2' }],
+    distribution: 'auto' as const,
   },
   render: (props) => {
     const { columns, distribution } = props;
@@ -37,4 +34,3 @@ export const Columns = {
     );
   },
 };
-

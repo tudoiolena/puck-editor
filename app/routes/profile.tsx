@@ -1,15 +1,7 @@
 import { useState } from 'react';
 import { Link, useLoaderData, useSearchParams } from 'react-router';
 import { ROUTES } from '../constants/routes';
-import {
-  Box,
-  Paper,
-  Typography,
-  Tabs,
-  Tab,
-  Button,
-  Breadcrumbs,
-} from '@mui/material';
+import { Box, Paper, Typography, Tabs, Tab, Button, Breadcrumbs } from '@mui/material';
 import { ArrowBack, Person, Lock } from '@mui/icons-material';
 import type { Route } from './+types/profile';
 import { ProfileInfo } from '../components/profile/ProfileInfo';
@@ -131,7 +123,7 @@ export default function Profile() {
         <TabPanel value={tabValue} index={0}>
           <ProfileInfo user={loaderData.user} />
         </TabPanel>
-        
+
         <TabPanel value={tabValue} index={1}>
           <ChangePassword />
         </TabPanel>

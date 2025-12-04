@@ -21,15 +21,18 @@ async function createTransporter() {
   // Option 2: Use provided SMTP credentials
   if (process.env.SMTP_USER && process.env.SMTP_PASS) {
     // Clean up the password - remove spaces and quotes (App Passwords often have spaces)
-    const cleanPassword = process.env.SMTP_PASS.trim().replace(/\s+/g, '').replace(/^["']|["']$/g, '');
+    const cleanPassword = process.env.SMTP_PASS.trim()
+      .replace(/\s+/g, '')
+      .replace(/^["']|["']$/g, '');
     const cleanUser = process.env.SMTP_USER.trim().replace(/^["']|["']$/g, '');
-    
+
     // Check if this is Gmail or Google Workspace
     const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
-    const isGmailOrWorkspace = smtpHost === 'smtp.gmail.com' || 
-                                cleanUser.endsWith('@gmail.com') ||
-                                cleanUser.includes('@devit.group') ||
-                                (!process.env.SMTP_HOST && cleanUser.includes('@'));
+    const isGmailOrWorkspace =
+      smtpHost === 'smtp.gmail.com' ||
+      cleanUser.endsWith('@gmail.com') ||
+      cleanUser.includes('@devit.group') ||
+      (!process.env.SMTP_HOST && cleanUser.includes('@'));
 
     // Debug logging (only in development, don't log the full password)
     if (process.env.NODE_ENV === 'development') {
@@ -58,7 +61,7 @@ async function createTransporter() {
         host: smtpHost,
         port: smtpPort,
         secure: smtpPort === 465, // true for 465, false for other ports
-    auth: {
+        auth: {
           user: cleanUser,
           pass: cleanPassword,
         },
@@ -91,7 +94,9 @@ async function getTransporter(): Promise<nodemailer.Transporter | null> {
     .then((trans) => {
       transporter = trans;
       if (transporter && process.env.USE_ETHEREAL_EMAIL === 'true') {
-        console.log('📧 Using Ethereal Email for testing (emails won\'t be sent, check Ethereal inbox)');
+        console.log(
+          "📧 Using Ethereal Email for testing (emails won't be sent, check Ethereal inbox)"
+        );
       } else if (transporter) {
         console.log('📧 SMTP transporter initialized');
       } else {
@@ -108,7 +113,11 @@ async function getTransporter(): Promise<nodemailer.Transporter | null> {
   return transporterPromise;
 }
 
-export async function sendVerificationEmail(email: string, firstName: string, verificationToken: string) {
+export async function sendVerificationEmail(
+  email: string,
+  firstName: string,
+  verificationToken: string
+) {
   try {
     const verificationUrl = `${process.env.APP_URL}/verify-email?token=${verificationToken}`;
 
@@ -142,7 +151,7 @@ export async function sendVerificationEmail(email: string, firstName: string, ve
     };
 
     const info = await emailTransporter.sendMail(mailOptions);
-    
+
     // If using Ethereal Email, log the preview URL
     if (process.env.USE_ETHEREAL_EMAIL === 'true') {
       const previewUrl = nodemailer.getTestMessageUrl(info);
@@ -152,22 +161,22 @@ export async function sendVerificationEmail(email: string, firstName: string, ve
     }
   } catch (error: any) {
     console.error('❌ Error sending verification email:', error);
-    
+
     // Provide helpful error messages
     if (error.code === 'EAUTH') {
       if (error.response?.includes('BadCredentials')) {
         throw new Error(
           'Gmail authentication failed. Please use an App Password instead of your regular password.\n' +
-          'To generate an App Password:\n' +
-          '1. Go to your Google Account settings\n' +
-          '2. Enable 2-Step Verification\n' +
-          '3. Go to App Passwords and generate one for "Mail"\n' +
-          '4. Use the 16-character App Password in SMTP_PASS'
+            'To generate an App Password:\n' +
+            '1. Go to your Google Account settings\n' +
+            '2. Enable 2-Step Verification\n' +
+            '3. Go to App Passwords and generate one for "Mail"\n' +
+            '4. Use the 16-character App Password in SMTP_PASS'
         );
       }
       throw new Error('Email authentication failed. Please check your SMTP credentials.');
     }
-    
+
     throw new Error(`Failed to send verification email: ${error.message}`);
   }
 }
@@ -207,7 +216,7 @@ export async function sendPasswordResetEmail(email: string, firstName: string, r
     };
 
     const info = await emailTransporter.sendMail(mailOptions);
-    
+
     // If using Ethereal Email, log the preview URL
     if (process.env.USE_ETHEREAL_EMAIL === 'true') {
       const previewUrl = nodemailer.getTestMessageUrl(info);
@@ -217,7 +226,7 @@ export async function sendPasswordResetEmail(email: string, firstName: string, r
     }
   } catch (error: any) {
     console.error('❌ Error sending password reset email:', error);
-    
+
     // Provide helpful error messages
     if (error.code === 'EAUTH') {
       console.error('🔐 Authentication Details:', {
@@ -227,13 +236,13 @@ export async function sendPasswordResetEmail(email: string, firstName: string, r
         responseCode: error.responseCode,
         response: error.response,
       });
-      
+
       if (error.response?.includes('BadCredentials')) {
-        const errorMsg = 
+        const errorMsg =
           'Gmail/Google Workspace authentication failed.\n\n' +
           'Possible issues:\n' +
           '1. The App Password might be incorrect - try regenerating it\n' +
-          '2. Make sure you\'re using an App Password (16 characters, no spaces), not your regular password\n' +
+          "2. Make sure you're using an App Password (16 characters, no spaces), not your regular password\n" +
           '3. For Google Workspace accounts, your admin may need to enable App Passwords\n' +
           '4. Verify that 2-Step Verification is enabled on your account\n\n' +
           'To generate a new App Password:\n' +
@@ -242,12 +251,14 @@ export async function sendPasswordResetEmail(email: string, firstName: string, r
           '3. Enter a name like "Nodemailer"\n' +
           '4. Copy the 16-character password (remove spaces)\n' +
           '5. Update SMTP_PASS in your .env file';
-        
+
         throw new Error(errorMsg);
       }
-      throw new Error(`Email authentication failed (${error.responseCode}). Please check your SMTP credentials.`);
+      throw new Error(
+        `Email authentication failed (${error.responseCode}). Please check your SMTP credentials.`
+      );
     }
-    
+
     throw new Error(`Failed to send password reset email: ${error.message}`);
   }
 }
@@ -314,7 +325,7 @@ export async function sendFormSubmissionEmail(
     };
 
     const info = await emailTransporter.sendMail(mailOptions);
-    
+
     // If using Ethereal Email, log the preview URL
     if (process.env.USE_ETHEREAL_EMAIL === 'true') {
       const previewUrl = nodemailer.getTestMessageUrl(info);

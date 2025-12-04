@@ -1,5 +1,5 @@
 import { loginSchema } from '../lib/validation';
-import { verifyPassword, generateAuthToken } from '../lib/auth';
+import { verifyPassword, createSession } from '../lib/auth';
 import { prisma } from '../lib/db.server';
 import { redirect } from 'react-router';
 import { ROUTES } from '../constants/routes';
@@ -38,7 +38,7 @@ export async function action({ request }: { request: Request }) {
     console.log('Verifying password...');
     const passwordValid = await verifyPassword(validatedData.password, user.password_hash);
     console.log('Password valid:', passwordValid);
-    
+
     if (!passwordValid) {
       console.log('Password verification failed');
       return {
@@ -46,22 +46,24 @@ export async function action({ request }: { request: Request }) {
       };
     }
 
-    // Generate auth token
-    console.log('Generating auth token for user ID:', user.id);
-    const authToken = generateAuthToken(user.id);
-    console.log('Auth token generated successfully');
+    // Create session in database
+    console.log('Creating session for user ID:', user.id);
+    const { sessionToken, expiresAt } = await createSession(user.id, request);
+    console.log('Session created successfully');
 
-    // Create session (you can store this in a cookie or database)
-    // For now, we'll redirect to dashboard with user data
+    // Calculate max age in seconds
+    const maxAge = Math.floor((expiresAt.getTime() - Date.now()) / 1000);
+
+    // Redirect to dashboard with session token in cookie
     console.log('Redirecting to dashboard...');
     return redirect(ROUTES.DASHBOARD, {
       headers: {
-        'Set-Cookie': `auth-token=${authToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`, // 7 days
+        'Set-Cookie': `auth-token=${sessionToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`,
       },
     });
   } catch (error) {
     console.error('Login error:', error);
-    
+
     if (error instanceof Error && error.name === 'ZodError') {
       return {
         error: 'Please check your input and try again.',

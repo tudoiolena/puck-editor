@@ -5,8 +5,8 @@ import { prisma } from '../lib/db.server';
 import { ROUTES } from '../constants/routes';
 
 export async function loader({ request }: { request: Request }) {
-  const userId = getUserIdFromRequest(request);
-  
+  const userId = await getUserIdFromRequest(request);
+
   if (!userId) {
     return redirect(ROUTES.LOGIN);
   }
@@ -36,4 +36,3 @@ export async function loader({ request }: { request: Request }) {
     statistics,
   };
 }
-

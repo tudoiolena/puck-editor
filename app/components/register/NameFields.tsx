@@ -11,14 +11,14 @@ interface NameFieldsProps {
   onLastNameChange: (value: string) => void;
 }
 
-export function NameFields({ 
-  firstName, 
-  lastName, 
-  firstNameError, 
-  lastNameError, 
-  loading, 
-  onFirstNameChange, 
-  onLastNameChange 
+export function NameFields({
+  firstName,
+  lastName,
+  firstNameError,
+  lastNameError,
+  loading,
+  onFirstNameChange,
+  onLastNameChange,
 }: NameFieldsProps) {
   return (
     <Box className="flex gap-2">

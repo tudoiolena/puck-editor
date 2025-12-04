@@ -1,45 +1,45 @@
 export const FileUpload = {
   fields: {
-    name: { type: "text" as const, label: "Field Name" },
-    label: { type: "text" as const, label: "Label" },
-    required: { 
-      type: "radio" as const, 
+    name: { type: 'text' as const, label: 'Field Name' },
+    label: { type: 'text' as const, label: 'Label' },
+    required: {
+      type: 'radio' as const,
       options: [
-        { label: "Required", value: true }, 
-        { label: "Optional", value: false }
-      ] 
+        { label: 'Required', value: true },
+        { label: 'Optional', value: false },
+      ],
     },
-    accept: { 
-      type: "select" as const, 
-      label: "File Types",
+    accept: {
+      type: 'select' as const,
+      label: 'File Types',
       options: [
-        { label: "All Files", value: "*" },
-        { label: "Images Only", value: "image/*" },
-        { label: "Documents Only", value: ".pdf,.doc,.docx,.txt" },
-        { label: "Images & Documents", value: "image/*,.pdf,.doc,.docx,.txt" },
-        { label: "Custom", value: "custom" }
-      ]
+        { label: 'All Files', value: '*' },
+        { label: 'Images Only', value: 'image/*' },
+        { label: 'Documents Only', value: '.pdf,.doc,.docx,.txt' },
+        { label: 'Images & Documents', value: 'image/*,.pdf,.doc,.docx,.txt' },
+        { label: 'Custom', value: 'custom' },
+      ],
     },
-    maxSize: { 
-      type: "select" as const, 
-      label: "Max File Size",
+    maxSize: {
+      type: 'select' as const,
+      label: 'Max File Size',
       options: [
-        { label: "1 MB", value: 1024 * 1024 },
-        { label: "5 MB", value: 5 * 1024 * 1024 },
-        { label: "10 MB", value: 10 * 1024 * 1024 },
-        { label: "25 MB", value: 25 * 1024 * 1024 },
-        { label: "50 MB", value: 50 * 1024 * 1024 }
-      ]
+        { label: '1 MB', value: 1024 * 1024 },
+        { label: '5 MB', value: 5 * 1024 * 1024 },
+        { label: '10 MB', value: 10 * 1024 * 1024 },
+        { label: '25 MB', value: 25 * 1024 * 1024 },
+        { label: '50 MB', value: 50 * 1024 * 1024 },
+      ],
     },
-    helperText: { type: "text" as const, label: "Helper Text" },
+    helperText: { type: 'text' as const, label: 'Helper Text' },
   },
   defaultProps: {
-    name: "file",
-    label: "Upload File",
+    name: 'file',
+    label: 'Upload File',
     required: false,
-    accept: "*",
+    accept: '*',
     maxSize: 5 * 1024 * 1024, // 5MB
-    helperText: "",
+    helperText: '',
   },
   render: (props) => {
     const { name, label, required, accept, maxSize, helperText } = props;
@@ -51,11 +51,16 @@ export const FileUpload = {
       return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
-    const acceptText = accept === "*" ? "All files" : 
-                      accept === "image/*" ? "Images only" :
-                      accept === ".pdf,.doc,.docx,.txt" ? "Documents only" :
-                      accept === "image/*,.pdf,.doc,.docx,.txt" ? "Images and documents" :
-                      "Custom types";
+    const acceptText =
+      accept === '*'
+        ? 'All files'
+        : accept === 'image/*'
+          ? 'Images only'
+          : accept === '.pdf,.doc,.docx,.txt'
+            ? 'Documents only'
+            : accept === 'image/*,.pdf,.doc,.docx,.txt'
+              ? 'Images and documents'
+              : 'Custom types';
 
     return (
       <div className="mb-4">
@@ -89,7 +94,7 @@ export const FileUpload = {
                   name={name}
                   type="file"
                   className="sr-only"
-                  accept={accept === "custom" ? "" : accept}
+                  accept={accept === 'custom' ? '' : accept}
                   required={required}
                 />
               </label>
@@ -105,4 +110,3 @@ export const FileUpload = {
     );
   },
 };
-

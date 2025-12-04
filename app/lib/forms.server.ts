@@ -1,6 +1,6 @@
-import type { Data } from "@measured/puck";
-import { prisma } from "./db.server";
-import { sendFormSubmissionEmail } from "./email";
+import type { Data } from '@measured/puck';
+import { prisma } from './db.server';
+import { sendFormSubmissionEmail } from './email';
 
 export interface Form {
   id: number;
@@ -109,7 +109,7 @@ export async function getUserForms(userId: number): Promise<Form[]> {
     },
   });
 
-  return forms.map(form => ({
+  return forms.map((form) => ({
     id: form.id,
     userId: form.user_id,
     title: form.title,
@@ -311,7 +311,7 @@ export async function submitForm(
   // Actually, we should fetch the form with the user to get the email
   const formWithUser = await prisma.form.findUnique({
     where: { id: formId },
-    include: { user: true }
+    include: { user: true },
   });
 
   if (formWithUser) {
@@ -328,7 +328,7 @@ export async function submitForm(
         email,
         submissionData,
         dashboardUrl
-      ).catch(err => console.error('Failed to send notification email:', err));
+      ).catch((err) => console.error('Failed to send notification email:', err));
     }
   }
 
@@ -370,7 +370,7 @@ export async function getFormSubmissions(
     },
   });
 
-  return submissions.map(sub => ({
+  return submissions.map((sub) => ({
     id: sub.id,
     formId: sub.form_id,
     email: sub.email,
@@ -414,10 +414,7 @@ export async function getSubmission(
 /**
  * Get submissions count for a form
  */
-export async function getFormSubmissionsCount(
-  formId: number,
-  userId: number
-): Promise<number> {
+export async function getFormSubmissionsCount(formId: number, userId: number): Promise<number> {
   // Verify the form belongs to the user
   const form = await getForm(formId, userId);
   if (!form) return 0;
@@ -476,7 +473,7 @@ export async function getUserStatistics(userId: number) {
 
   // Calculate basic stats
   const totalForms = forms.length;
-  const publishedForms = forms.filter(form => form.is_published).length;
+  const publishedForms = forms.filter((form) => form.is_published).length;
   const draftForms = totalForms - publishedForms;
   const totalSubmissions = forms.reduce((sum, form) => sum + form.submissions.length, 0);
 
@@ -500,30 +497,37 @@ export async function getUserStatistics(userId: number) {
   });
 
   // Group submissions by date
-  const submissionsByDate = recentSubmissions.reduce((acc, submission) => {
-    const date = submission.submitted_at.toISOString().split('T')[0];
-    acc[date] = (acc[date] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const submissionsByDate = recentSubmissions.reduce(
+    (acc, submission) => {
+      const date = submission.submitted_at.toISOString().split('T')[0];
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   // Get form performance data
-  const formPerformance = forms.map(form => ({
-    id: form.id,
-    title: form.title,
-    slug: form.slug,
-    isPublished: form.is_published,
-    submissionCount: form.submissions.length,
-    lastSubmission: form.submissions.length > 0
-      ? new Date(Math.max(...form.submissions.map(s => s.submitted_at.getTime())))
-      : null,
-  })).sort((a, b) => b.submissionCount - a.submissionCount);
+  const formPerformance = forms
+    .map((form) => ({
+      id: form.id,
+      title: form.title,
+      slug: form.slug,
+      isPublished: form.is_published,
+      submissionCount: form.submissions.length,
+      lastSubmission:
+        form.submissions.length > 0
+          ? new Date(Math.max(...form.submissions.map((s) => s.submitted_at.getTime())))
+          : null,
+    }))
+    .sort((a, b) => b.submissionCount - a.submissionCount);
 
   // Calculate conversion rates (simplified - assumes published forms get traffic)
-  const conversionData = formPerformance.map(form => ({
+  const conversionData = formPerformance.map((form) => ({
     ...form,
-    conversionRate: form.isPublished && totalSubmissions > 0
-      ? (form.submissionCount / totalSubmissions * 100).toFixed(1)
-      : '0',
+    conversionRate:
+      form.isPublished && totalSubmissions > 0
+        ? ((form.submissionCount / totalSubmissions) * 100).toFixed(1)
+        : '0',
   }));
 
   // Get daily submission counts for chart
@@ -547,7 +551,7 @@ export async function getUserStatistics(userId: number) {
     conversionData,
     dailySubmissions,
     recentActivity: {
-      last7Days: recentSubmissions.filter(s => {
+      last7Days: recentSubmissions.filter((s) => {
         const weekAgo = new Date();
         weekAgo.setDate(weekAgo.getDate() - 7);
         return s.submitted_at >= weekAgo;
@@ -556,4 +560,3 @@ export async function getUserStatistics(userId: number) {
     },
   };
 }
-

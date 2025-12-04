@@ -1,25 +1,25 @@
 export const SubmitButton = {
   fields: {
-    label: { type: "text" as const, label: "Button Label" },
+    label: { type: 'text' as const, label: 'Button Label' },
     align: {
-      type: "radio" as const,
+      type: 'radio' as const,
       options: [
-        { label: "Left", value: "left" },
-        { label: "Center", value: "center" },
-        { label: "Right", value: "right" },
+        { label: 'Left', value: 'left' },
+        { label: 'Center', value: 'center' },
+        { label: 'Right', value: 'right' },
       ],
     },
   },
   defaultProps: {
-    label: "Submit",
-    align: "left" as const,
+    label: 'Submit',
+    align: 'left' as const,
   },
   render: (props) => {
     const { label, align } = props;
     const alignClasses: Record<string, string> = {
-      left: "justify-start",
-      center: "justify-center",
-      right: "justify-end",
+      left: 'justify-start',
+      center: 'justify-center',
+      right: 'justify-end',
     };
     return (
       <div className={`flex ${alignClasses[align]} mb-4`}>
@@ -33,4 +33,3 @@ export const SubmitButton = {
     );
   },
 };
-

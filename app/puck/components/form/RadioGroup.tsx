@@ -1,27 +1,33 @@
 export const RadioGroup = {
   fields: {
-    name: { type: "text" as const, label: "Field Name" },
-    label: { type: "text" as const, label: "Label" },
-    required: { type: "radio" as const, options: [{ label: "Required", value: true }, { label: "Optional", value: false }] },
+    name: { type: 'text' as const, label: 'Field Name' },
+    label: { type: 'text' as const, label: 'Label' },
+    required: {
+      type: 'radio' as const,
+      options: [
+        { label: 'Required', value: true },
+        { label: 'Optional', value: false },
+      ],
+    },
     options: {
-      type: "array" as const,
+      type: 'array' as const,
       arrayFields: {
-        label: { type: "text" as const },
-        value: { type: "text" as const },
+        label: { type: 'text' as const },
+        value: { type: 'text' as const },
       },
       defaultItemProps: {
-        label: "Option",
-        value: "option",
+        label: 'Option',
+        value: 'option',
       },
     },
   },
   defaultProps: {
-    name: "radio",
-    label: "Choose One",
+    name: 'radio',
+    label: 'Choose One',
     required: false,
     options: [
-      { label: "Option 1", value: "option1" },
-      { label: "Option 2", value: "option2" },
+      { label: 'Option 1', value: 'option1' },
+      { label: 'Option 2', value: 'option2' },
     ],
   },
   render: (props) => {
@@ -54,4 +60,3 @@ export const RadioGroup = {
     );
   },
 };
-

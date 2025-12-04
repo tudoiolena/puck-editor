@@ -42,12 +42,12 @@ export default function ForgotPassword() {
       setEmailError('Email is required');
       return false;
     }
-    
+
     if (!validateEmail(email)) {
       setEmailError('Please enter a valid email address');
       return false;
     }
-    
+
     return true;
   };
 
@@ -136,11 +136,11 @@ export default function ForgotPassword() {
               helperText={emailError}
               slotProps={{
                 input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Email className="text-gray-400" />
-                  </InputAdornment>
-                ),
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Email className="text-gray-400" />
+                    </InputAdornment>
+                  ),
                 },
               }}
               disabled={loading}
@@ -171,7 +171,10 @@ export default function ForgotPassword() {
         <Box className="mt-6 text-center">
           <Typography variant="body2" className="text-gray-600">
             Remember your password?{' '}
-            <Link to="/login" className="text-blue-600 hover:text-blue-800 font-semibold no-underline">
+            <Link
+              to="/login"
+              className="text-blue-600 hover:text-blue-800 font-semibold no-underline"
+            >
               Sign in
             </Link>
           </Typography>
@@ -180,4 +183,3 @@ export default function ForgotPassword() {
     </Box>
   );
 }
-

@@ -30,7 +30,7 @@ export async function action({ request }: { request: Request }) {
       console.log('User not found, but returning success for security');
       return {
         success: true,
-        message: 'If an account with that email exists, we\'ve sent a password reset link.',
+        message: "If an account with that email exists, we've sent a password reset link.",
       };
     }
 
@@ -58,11 +58,11 @@ export async function action({ request }: { request: Request }) {
 
     return {
       success: true,
-      message: 'If an account with that email exists, we\'ve sent a password reset link.',
+      message: "If an account with that email exists, we've sent a password reset link.",
     };
   } catch (error) {
     console.error('Forgot password error:', error);
-    
+
     if (error instanceof Error && error.name === 'ZodError') {
       return {
         success: false,

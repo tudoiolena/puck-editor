@@ -1,11 +1,11 @@
 import { useState, type MouseEvent } from 'react';
-import { 
-  FormControl, 
-  InputLabel, 
-  OutlinedInput, 
-  InputAdornment, 
-  IconButton, 
-  FormHelperText 
+import {
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+  FormHelperText,
 } from '@mui/material';
 import { Visibility, VisibilityOff, Lock } from '@mui/icons-material';
 
@@ -46,9 +46,7 @@ export function PasswordField({ value, error, loading, onChange }: PasswordField
         endAdornment={
           <InputAdornment position="end">
             <IconButton
-              aria-label={
-                showPassword ? 'hide the password' : 'display the password'
-              }
+              aria-label={showPassword ? 'hide the password' : 'display the password'}
               onClick={handleClickShowPassword}
               onMouseDown={handleMouseDownPassword}
               onMouseUp={handleMouseUpPassword}

@@ -1,4 +1,4 @@
-import { verifyAuthToken } from '../lib/auth';
+import { getUserIdFromRequest } from '../lib/auth';
 import { prisma } from '../lib/db.server';
 import { getUserForms } from '../lib/forms.server';
 import { redirect } from 'react-router';
@@ -6,26 +6,15 @@ import { ROUTES } from '../constants/routes';
 
 export async function loader({ request }: { request: Request }) {
   try {
-    // Get the auth token from cookies
-    const cookieHeader = request.headers.get('Cookie');
-    const authToken = cookieHeader
-      ?.split(';')
-      .find(cookie => cookie.trim().startsWith('auth-token='))
-      ?.split('=')[1];
-
-    if (!authToken) {
-      return redirect(ROUTES.LOGIN);
-    }
-
-    // Verify the token
-    const decoded = verifyAuthToken(authToken);
-    if (!decoded) {
+    // Verify session and get user ID
+    const userId = await getUserIdFromRequest(request);
+    if (!userId) {
       return redirect(ROUTES.LOGIN);
     }
 
     // Get user data
     const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
+      where: { id: userId },
       select: {
         id: true,
         email: true,

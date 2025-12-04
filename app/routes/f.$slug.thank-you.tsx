@@ -13,13 +13,13 @@ export function meta({ loaderData }: Route.MetaArgs) {
 
 export async function loader({ params }: Route.LoaderArgs) {
   const slug = params.slug;
-  
+
   if (!slug) {
     return { form: null };
   }
 
   const form = await getFormBySlug(slug);
-  
+
   if (!form) {
     return { form: null };
   }
@@ -34,7 +34,8 @@ export async function loader({ params }: Route.LoaderArgs) {
 }
 
 export default function ThankYou({ loaderData }: Route.ComponentProps) {
-  const thankYouMessage = loaderData.form?.settings?.thankYouMessage || 
+  const thankYouMessage =
+    loaderData.form?.settings?.thankYouMessage ||
     'Thank you for your submission! We have received your response.';
 
   return (
@@ -79,4 +80,3 @@ export default function ThankYou({ loaderData }: Route.ComponentProps) {
     </Box>
   );
 }
-

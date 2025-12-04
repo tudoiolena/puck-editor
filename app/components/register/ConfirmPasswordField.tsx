@@ -1,11 +1,11 @@
 import { useState, type MouseEvent } from 'react';
-import { 
-  FormControl, 
-  InputLabel, 
-  OutlinedInput, 
-  InputAdornment, 
-  IconButton, 
-  FormHelperText 
+import {
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+  FormHelperText,
 } from '@mui/material';
 import { Visibility, VisibilityOff, Lock } from '@mui/icons-material';
 
@@ -16,7 +16,12 @@ interface ConfirmPasswordFieldProps {
   onChange: (value: string) => void;
 }
 
-export function ConfirmPasswordField({ value, error, loading, onChange }: ConfirmPasswordFieldProps) {
+export function ConfirmPasswordField({
+  value,
+  error,
+  loading,
+  onChange,
+}: ConfirmPasswordFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -46,9 +51,7 @@ export function ConfirmPasswordField({ value, error, loading, onChange }: Confir
         endAdornment={
           <InputAdornment position="end">
             <IconButton
-              aria-label={
-                showPassword ? 'hide the password' : 'display the password'
-              }
+              aria-label={showPassword ? 'hide the password' : 'display the password'}
               onClick={handleClickShowPassword}
               onMouseDown={handleMouseDownPassword}
               onMouseUp={handleMouseUpPassword}

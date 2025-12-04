@@ -32,4 +32,3 @@ export const validateLoginForm = (formData: LoginFormData): LoginFormErrors => {
 export const hasErrors = (errors: LoginFormErrors): boolean => {
   return Object.values(errors).some((error) => error !== '');
 };
-

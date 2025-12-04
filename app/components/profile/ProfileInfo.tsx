@@ -25,8 +25,10 @@ interface ProfileInfoProps {
 }
 
 export function ProfileInfo({ user }: ProfileInfoProps) {
-  const actionData = useActionData() as { success?: boolean; error?: string; message?: string; filePath?: string } | undefined;
-  
+  const actionData = useActionData() as
+    | { success?: boolean; error?: string; message?: string; filePath?: string }
+    | undefined;
+
   const [isEditing, setIsEditing] = useState(false);
   const [firstName, setFirstName] = useState(user.first_name);
   const [lastName, setLastName] = useState(user.last_name);
@@ -58,7 +60,7 @@ export function ProfileInfo({ user }: ProfileInfoProps) {
             >
               {!profilePictureUrl && initials}
             </Avatar>
-            
+
             <IconButton
               component="label"
               className="absolute -bottom-2 -right-2 bg-blue-600 hover:bg-blue-700 text-white"
@@ -99,7 +101,7 @@ export function ProfileInfo({ user }: ProfileInfoProps) {
 
           <Form method="post">
             <input type="hidden" name="action" value="updateProfile" />
-            
+
             <Box>
               {/* Email (Read-only) */}
               <Box className="mb-4">

@@ -44,4 +44,3 @@ export const buildRoute = {
   publicFormThankYou: (slug: string) => ROUTES.PUBLIC_FORM_THANK_YOU(slug),
   upload: (filename: string) => ROUTES.UPLOAD(filename),
 };
-

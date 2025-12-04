@@ -63,21 +63,17 @@ export function DashboardAppBar({ user }: DashboardAppBarProps) {
           className="flex items-center flex-grow cursor-pointer hover:opacity-90 transition-opacity"
           sx={{ textDecoration: 'none', color: 'inherit' }}
         >
-        <DashboardIcon className="mr-2" />
+          <DashboardIcon className="mr-2" />
           <Typography variant="h6" component="div" className="font-bold">
-          My Dashboard
-        </Typography>
+            My Dashboard
+          </Typography>
         </Box>
-        
+
         <IconButton color="inherit" className="mr-2">
           <Notifications />
         </IconButton>
-        
-        <IconButton
-          size="large"
-          onClick={handleMenu}
-          color="inherit"
-        >
+
+        <IconButton size="large" onClick={handleMenu} color="inherit">
           <Avatar
             src={user.profile_picture || undefined}
             className="w-8 h-8"
@@ -86,7 +82,7 @@ export function DashboardAppBar({ user }: DashboardAppBarProps) {
             {!user.profile_picture && initials}
           </Avatar>
         </IconButton>
-        
+
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
@@ -131,7 +127,7 @@ export function DashboardAppBar({ user }: DashboardAppBarProps) {
             Statistics
           </MenuItem>
           <Divider />
-          <Form method="post">
+          <Form method="post" action={ROUTES.DASHBOARD}>
             <input type="hidden" name="action" value="logout" />
             <MenuItem component="button" type="submit">
               <ExitToApp className="mr-2" />
@@ -143,4 +139,3 @@ export function DashboardAppBar({ user }: DashboardAppBarProps) {
     </AppBar>
   );
 }
-

@@ -15,7 +15,9 @@ import { Visibility, VisibilityOff, Lock } from '@mui/icons-material';
 interface ChangePasswordProps {}
 
 export function ChangePassword({}: ChangePasswordProps) {
-  const actionData = useActionData() as { success?: boolean; error?: string; message?: string } | undefined;
+  const actionData = useActionData() as
+    | { success?: boolean; error?: string; message?: string }
+    | undefined;
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
@@ -23,7 +25,7 @@ export function ChangePassword({}: ChangePasswordProps) {
   });
 
   const togglePasswordVisibility = (field: keyof typeof showPasswords) => {
-    setShowPasswords(prev => ({
+    setShowPasswords((prev) => ({
       ...prev,
       [field]: !prev[field],
     }));
@@ -49,7 +51,7 @@ export function ChangePassword({}: ChangePasswordProps) {
 
       <Form method="post">
         <input type="hidden" name="action" value="changePassword" />
-        
+
         <Box>
           {/* Current Password */}
           <Box className="mb-4">
@@ -68,10 +70,7 @@ export function ChangePassword({}: ChangePasswordProps) {
                   ),
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => togglePasswordVisibility('current')}
-                        edge="end"
-                      >
+                      <IconButton onClick={() => togglePasswordVisibility('current')} edge="end">
                         {showPasswords.current ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
@@ -99,10 +98,7 @@ export function ChangePassword({}: ChangePasswordProps) {
                   ),
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => togglePasswordVisibility('new')}
-                        edge="end"
-                      >
+                      <IconButton onClick={() => togglePasswordVisibility('new')} edge="end">
                         {showPasswords.new ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
@@ -130,10 +126,7 @@ export function ChangePassword({}: ChangePasswordProps) {
                   ),
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => togglePasswordVisibility('confirm')}
-                        edge="end"
-                      >
+                      <IconButton onClick={() => togglePasswordVisibility('confirm')} edge="end">
                         {showPasswords.confirm ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
@@ -160,8 +153,8 @@ export function ChangePassword({}: ChangePasswordProps) {
       {/* Security Notice */}
       <Box className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
         <Typography variant="body2" className="text-yellow-800">
-          <strong>Security Notice:</strong> After changing your password, you'll need to log in again 
-          on all devices. Make sure to use a strong, unique password.
+          <strong>Security Notice:</strong> After changing your password, you'll need to log in
+          again on all devices. Make sure to use a strong, unique password.
         </Typography>
       </Box>
     </Paper>

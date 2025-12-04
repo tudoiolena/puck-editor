@@ -1,29 +1,29 @@
-import type { UserConfig } from "../../types/config";
+import type { UserConfig } from '../../types/config';
 
 export const Hero = {
   fields: {
     title: {
-      type: "text" as const,
+      type: 'text' as const,
     },
     description: {
-      type: "textarea" as const,
+      type: 'textarea' as const,
     },
     align: {
-      type: "radio" as const,
+      type: 'radio' as const,
       options: [
-        { label: "Left", value: "left" },
-        { label: "Center", value: "center" },
+        { label: 'Left', value: 'left' },
+        { label: 'Center', value: 'center' },
       ],
     },
     padding: {
-      type: "text" as const,
+      type: 'text' as const,
     },
   },
   defaultProps: {
-    title: "Hero Title",
-    description: "Hero description",
-    align: "left" as const,
-    padding: "64px",
+    title: 'Hero Title',
+    description: 'Hero description',
+    align: 'left' as const,
+    padding: '64px',
   },
   render: (props) => {
     const { title, description, align, padding } = props;
@@ -31,7 +31,7 @@ export const Hero = {
       <div
         style={{ padding }}
         className={`bg-gradient-to-br from-blue-50 to-indigo-100 ${
-          align === "center" ? "text-center" : ""
+          align === 'center' ? 'text-center' : ''
         }`}
       >
         <div className="max-w-6xl mx-auto">
@@ -42,4 +42,3 @@ export const Hero = {
     );
   },
 };
-

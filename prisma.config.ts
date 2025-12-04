@@ -11,9 +11,9 @@ export default defineConfig({
     seed: 'tsx prisma/seed.ts',
   },
   // The database URL
-    datasource: {
+  datasource: {
     // Type Safe env() helper
     // Does not replace the need for dotenv
     url: env('DATABASE_URL'),
-    },
+  },
 });

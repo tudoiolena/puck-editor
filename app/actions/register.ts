@@ -62,7 +62,7 @@ export async function action({ request }: { request: Request }) {
     return redirect('/register?success=true');
   } catch (error) {
     console.error('Registration error:', error);
-    
+
     if (error instanceof Error && error.name === 'ZodError') {
       return {
         error: 'Please check your input and try again.',

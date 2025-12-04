@@ -1,4 +1,12 @@
-import { Box, Typography, LinearProgress, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import {
+  Box,
+  Typography,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
 import { Cancel } from '@mui/icons-material';
 import { validatePassword, getPasswordStrength } from '../../utils/auth';
 
@@ -14,10 +22,14 @@ export function PasswordStrengthIndicator({ password }: PasswordStrengthIndicato
 
   const getPasswordStrengthColor = () => {
     switch (passwordStrength.strength) {
-      case 'weak': return 'error';
-      case 'medium': return 'warning';
-      case 'strong': return 'success';
-      default: return 'primary';
+      case 'weak':
+        return 'error';
+      case 'medium':
+        return 'warning';
+      case 'strong':
+        return 'success';
+      default:
+        return 'primary';
     }
   };
 
@@ -31,24 +43,26 @@ export function PasswordStrengthIndicator({ password }: PasswordStrengthIndicato
         <Typography variant="caption" className="text-gray-600">
           Password Strength:
         </Typography>
-        <Typography 
-          variant="caption" 
+        <Typography
+          variant="caption"
           className={`font-semibold ${
-            passwordStrength.strength === 'weak' ? 'text-red-600' :
-            passwordStrength.strength === 'medium' ? 'text-yellow-600' :
-            'text-green-600'
+            passwordStrength.strength === 'weak'
+              ? 'text-red-600'
+              : passwordStrength.strength === 'medium'
+                ? 'text-yellow-600'
+                : 'text-green-600'
           }`}
         >
           {passwordStrength.strength.toUpperCase()}
         </Typography>
       </Box>
-      <LinearProgress 
-        variant="determinate" 
+      <LinearProgress
+        variant="determinate"
         value={getPasswordStrengthValue()}
         color={getPasswordStrengthColor()}
         className="h-2 rounded"
       />
-      
+
       {!passwordValidation.isValid && (
         <List dense className="mt-2">
           {passwordValidation.errors.map((error, index) => (
@@ -56,7 +70,7 @@ export function PasswordStrengthIndicator({ password }: PasswordStrengthIndicato
               <ListItemIcon className="min-w-0 mr-2">
                 <Cancel className="text-red-500" fontSize="small" />
               </ListItemIcon>
-              <ListItemText 
+              <ListItemText
                 primary={error}
                 primaryTypographyProps={{ variant: 'caption', className: 'text-red-600' }}
               />
